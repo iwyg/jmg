@@ -1,29 +1,27 @@
-#JitImage
+# Jmg
 
 [![Author](http://img.shields.io/badge/author-iwyg-blue.svg?style=flat-square)](https://github.com/iwyg)
-[![Source Code](http://img.shields.io/badge/source-thapp/jitimage-blue.svg?style=flat-square)](https://github.com/iwyg/jitimage/tree/develop)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/iwyg/jitimage/blob/develop/LICENSE.md)
+[![Source Code](http://img.shields.io/badge/source-thapp/jmg-blue.svg?style=flat-square)](https://github.com/iwyg/jmg/tree/develop)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/iwyg/jmg/blob/develop/LICENSE.md)
 
-[![Build Status](https://img.shields.io/travis/iwyg/jitimage/develop.svg?style=flat-square)](https://travis-ci.org/iwyg/jitimage)
-[![Total Downloads](https://img.shields.io/packagist/dt/thapp/jitimage.svg?style=flat-square)](https://packagist.org/packages/thapp/jitimage)
+[![Build Status](https://img.shields.io/travis/iwyg/jmg/develop.svg?style=flat-square)](https://travis-ci.org/iwyg/jmg)
+[![Total Downloads](https://img.shields.io/packagist/dt/thapp/jmg.svg?style=flat-square)](https://packagist.org/packages/thapp/jmg)
 
+## Just In Time Image manipulation: Library for HTTP based image manipulation
 
-## Just In Time Image manipulation: Library for HTTP based image manipulation. 
+By default Jmg uses the [`Thapp/Image`](https://packagist.org/packages/thapp/image)
+php packageto process images, but will also work with the fantastic
+ [`Imagine`](https://packagist.org/packages/imagine/imagine) library.
 
-By default JitImage uses the [`Thapp/Image`](https://packagist.org/packages/thapp/image) php package to process images, but will also
-work with the fantastic [`Imagine`](https://packagist.org/packages/imagine/imagine) library. 
+## Installation
 
-
-
-## Installation:
-
-Require `thapp/jitimage` in your `composer.json` file:
+Require `thapp/jmg` in your `composer.json` file:
 
 ```json
 {
-	"require": {
-		"thapp/jitimage":"dev-develop"
-	} 
+    "require": {
+        "thapp/jmg":"dev-develop"
+    }
 }
 ```
 
@@ -49,14 +47,14 @@ $ vendor/bin/phpunit -c phpunit.xml.dist
 
 ### Source loaders and resolvers
 
-JitImage supports loading images from a variety of sources. In the example below, lets assume we have a local filesystem that hosts our images.
+Jmg supports loading images from a variety of sources. In the example below, lets assume we have a local filesystem that hosts our images.
 
 ```php
 <?php
 
-use Thapp\JitImage\Loader\FilesystemLoader;
-use Thapp\JitImage\Resolver\LoaderReslover;
-use Thapp\JitImage\Resolver\PathResolver;
+use Thapp\Jmg\Loader\FilesystemLoader;
+use Thapp\Jmg\Resolver\LoaderReslover;
+use Thapp\Jmg\Resolver\PathResolver;
 
 $loaderResolver = new LoaderResolver;
 $pathResolver = new PathResolver;
@@ -82,7 +80,7 @@ $src = $loader->load($path . '/image.jpg');
 
 You may create your own loaders, e.g. for loading images from a remote source like an Amazon s3 storage or an ftp server. 
 
-Your custom loader must implement the `Thapp\JitImage\Loader\LoaderInterface` or simply extend from `Thapp\JitImage\Loader\AbstractLoader`.
+Your custom loader must implement the `Thapp\Jmg\Loader\LoaderInterface` or simply extend from `Thapp\Jmg\Loader\AbstractLoader`.
 
 ```php
 
@@ -90,7 +88,7 @@ Your custom loader must implement the `Thapp\JitImage\Loader\LoaderInterface` or
 
 namespace Acme\Loaders;
 
-use Thapp\JitImage\Loader\AbstractLoader
+use Thapp\Jmg\Loader\AbstractLoader
 
 class AWSLoader extends AbstractLoader
 {
@@ -116,9 +114,9 @@ Using the `ImageResolver` class, it is easy to resolve images from parameter str
 <?php
 
 
-use Thapp\JitImage\Image\Processor;
-use Thapp\JitImage\Resolver\PathResolver;
-use Thapp\JitImage\Resolver\LoaderReslover;
+use Thapp\Jmg\Image\Processor;
+use Thapp\Jmg\Resolver\PathResolver;
+use Thapp\Jmg\Resolver\LoaderReslover;
 use Thapp\Image\Driver\Imagick\Source;
 
 
@@ -135,7 +133,7 @@ if ($resource = $res->resolve('images/source.jpg', $params)) {
 
 ## Framework integration
 
-JitImage comes prebundled with support for Laravel 5.* and Silex. 
+Jmg comes prebundled with support for Laravel 5.* and Silex. 
 
 ### Laravel 5.*
 
@@ -146,12 +144,12 @@ In `config/app.php`, add:
 
 $providers => [
     // …
-    'Thapp\JitImage\Framework\Laravel\JitImageServiceProvider'
+    'Thapp\Jmg\Framework\Laravel\JmgServiceProvider'
 ];
 
 $aliases => [
     // …
-    'JitImage'      => 'Thapp\JitImage\Framework\Laravel\Facade\Jmg'
+    'Jmg'      => 'Thapp\Jmg\Framework\Laravel\Facade\Jmg'
 ]
 
 ```
@@ -208,12 +206,10 @@ Predefined image formats, e.g.
     'images', '1/0/400,filter:palette;p=rgb:clrz;c=#0ff' // will be available at `/thumbs/image.jpg`
 ], 
 ```
-
 **default\_cache**  
 The default caching type. Shipped types are `file`
 
 **default\_cache\_path**  
 Directory path for local caches.
-
 
 ### Silex
