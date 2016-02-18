@@ -103,7 +103,6 @@ trait FileHelper
         }
 
         foreach (new \FilesystemIterator($dir, \FilesystemIterator::SKIP_DOTS) as $path => $item) {
-
             if ($item->isFile()) {
                 unlink($item);
                 continue;

@@ -31,36 +31,22 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 trait ImageControllerTrait
 {
-    /**
-     * @var Request
-     */
+    /** @var Request */
     private $request;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $path;
 
-    /**
-     * @var ResolverInterface
-     */
+    /** @var ResolverInterface */
     private $pathResolver;
 
-    /**
-     * @var ParameterResolverInterface
-     */
+    /** @var ParameterResolverInterface */
     private $imageResolver;
 
-    /**
-     * urlSigner
-     *
-     * @var mixed
-     */
+    /** @var HttpSignerInterface */
     private $signer;
 
-    /**
-     * @var ResolverInterface
-     */
+    /** @var ResolverInterface */
     private $recipes;
 
     /**

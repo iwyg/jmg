@@ -167,4 +167,3 @@ interface ProcessorInterface
      */
     public function getTargetSize();
 }
-

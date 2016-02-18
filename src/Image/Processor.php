@@ -33,7 +33,10 @@ use Thapp\Jmg\Resource\FileResourceInterface;
  */
 class Processor extends AbstractProcessor
 {
+    /** @var ImageInterface */
     private $image;
+
+    /** @var SourceInterface */
     private $source;
 
     /**
@@ -45,13 +48,13 @@ class Processor extends AbstractProcessor
      */
     public function __construct(SourceInterface $source, FilterResolverInterface $filters = null, array $options = [])
     {
-        $this->source = $source;
+        $this->source  = $source;
         $this->filters = $filters;
         $this->options = $options;
     }
 
     /**
-     * __destruct
+     * Unload proc after on destruction.
      *
      * @return void
      */
@@ -71,9 +74,9 @@ class Processor extends AbstractProcessor
     }
 
     /**
-     * Get output dimensions in width and height
+     * Get output dimensions in width and height.
      *
-     * @return array
+     * @return array [int $width, int $height]
      */
     public function getTargetSize()
     {
@@ -84,6 +87,8 @@ class Processor extends AbstractProcessor
 
     /**
      * {@inheritdoc}
+     *
+     * @return ImageInterface
      */
     public function getDriver()
     {
@@ -111,10 +116,9 @@ class Processor extends AbstractProcessor
     }
 
     /**
-     * getRatio
+     * Get the image ratio.
      *
-     *
-     * @return void
+     * @return float
      */
     protected function getRatio()
     {
@@ -252,6 +256,9 @@ class Processor extends AbstractProcessor
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function unload()
     {
         if (null !== $this->image) {
@@ -261,5 +268,4 @@ class Processor extends AbstractProcessor
 
         parent::unload();
     }
-
 }

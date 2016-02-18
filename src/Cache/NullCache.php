@@ -29,6 +29,7 @@ class NullCache extends AbstractCache
      */
     public function set($id, ProcessorInterface $proc)
     {
+        return null;
     }
 
     /**
@@ -52,6 +53,7 @@ class NullCache extends AbstractCache
      */
     public function purge()
     {
+        return null;
     }
 
     /**
@@ -59,5 +61,6 @@ class NullCache extends AbstractCache
      */
     public function delete($file, $prefix = '')
     {
+        return null;
     }
 }

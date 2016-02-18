@@ -16,7 +16,7 @@ use Thapp\Jmg\Resource\CacheClientResource;
 use Thapp\Jmg\Cache\Client\ClientInterface;
 
 /**
- * @class MemcachedCache
+ * @class ClientCache
  *
  * @package Thapp\Jmg
  * @version $Id$
@@ -163,14 +163,14 @@ class ClientCache extends AbstractCache
     }
 
     /**
-     * createResource
+     * Creates the resource.
      *
-     * @param mixed $proc
-     * @param mixed $key
-     * @param mixed $id
-     * @param string $prefix
+     * @param ProcessorInterface $proc
+     * @param string             $key
+     * @param string             $id
+     * @param string             $prefix
      *
-     * @return void
+     * @return CacheClientResource
      */
     private function createResource($proc, $key, $id, $prefix = '')
     {
@@ -186,7 +186,7 @@ class ClientCache extends AbstractCache
      *
      * @param array $pool
      *
-     * @return void
+     * @return array
      */
     private function collectKeys(array $pool)
     {
@@ -198,9 +198,9 @@ class ClientCache extends AbstractCache
     /**
      * getKeyAndPrefix
      *
-     * @param mixed $key
+     * @param string $key
      *
-     * @return void
+     * @return string
      */
     private function getKeyAndPrefix($key)
     {
@@ -239,9 +239,9 @@ class ClientCache extends AbstractCache
     /**
      * getPrefixed
      *
-     * @param mixed $key
+     * @param string $key
      *
-     * @return void
+     * @return string
      */
     private function getPrefixed($key)
     {
@@ -251,8 +251,7 @@ class ClientCache extends AbstractCache
     /**
      * indexKey
      *
-     *
-     * @return void
+     * @return string
      */
     public function indexKey()
     {
@@ -272,5 +271,4 @@ class ClientCache extends AbstractCache
             $this->changes[] = true;
         }
     }
-
 }

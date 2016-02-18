@@ -22,16 +22,23 @@ use Thapp\Image\Color\Parser;
  */
 class Parameters
 {
+    /** @var string **/
     const P_SEPARATOR = '/';
 
+    /** @var string **/
     private $str;
+
+    /** @var array **/
     private $params;
+
+    /** @var string **/
     private $separator;
 
     /**
      * Constructor.
      *
      * @param array $params
+     * @param string $separator
      */
     public function __construct(array $params = [], $separator = self::P_SEPARATOR)
     {

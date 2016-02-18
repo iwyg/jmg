@@ -12,6 +12,7 @@
 
 namespace Thapp\Jmg\Http;
 
+use DateTime;
 use Thapp\Jmg\Resource\CachedResource;
 use Thapp\Jmg\Resource\ResourceInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,32 +29,16 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
  */
 class ImageResponse extends Response
 {
-    /**
-     * useXsend
-     *
-     * @var boolean
-     */
+    /** @var bool */
     protected $useXsend;
 
-    /**
-     * resource
-     *
-     * @var ResourceInterface
-     */
+    /** @var ResourceInterface */
     protected $resource;
 
-    /**
-     * prepared
-     *
-     * @var mixed
-     */
+    /** @var mixed */
     private $prepared;
 
-    /**
-     * trustXSendFileHeader
-     *
-     * @var boolean
-     */
+    /** @var bool */
     protected static $trustXSendFileHeader = true;
 
     /**
@@ -131,7 +116,7 @@ class ImageResponse extends Response
 
         $this->useXsend = static::$trustXSendFileHeader && $request->headers->has('X-Sendfile-Type');
 
-        $lastMod = (new \DateTime)->setTimestamp($modDate = $this->resource->getLastModified());
+        $lastMod = (new DateTime)->setTimestamp($modDate = $this->resource->getLastModified());
         $mod = strtotime($request->headers->get('if-modified-since', $time = time()));
 
         if (($this->resource instanceof CachedResource || $this->resource->isFresh($time)) && $mod === $modDate) {

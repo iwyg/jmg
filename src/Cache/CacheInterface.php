@@ -22,19 +22,23 @@ use Thapp\Jmg\ProcessorInterface;
  */
 interface CacheInterface
 {
+    /** @var bool */
     const CONTENT_STRING   = true;
 
+    /** @var bool */
     const CONTENT_RESOURCE = false;
 
+    /** @var int */
     const EXPIRY_NONE = -1;
 
     /**
-     * Get a cached resource by id.
+     * Get a cached resource by key.
      *
      * @param string $key
-     * @param boolean $raw
+     * @param bool $raw
      *
-     * @return string|\Thapp\Immage\Resource\ResourceInterface
+     * @return \Thapp\Image\Resource\ResourceInterface if $raw is set to true,
+     * it should simple return the resource as string.
      */
     public function get($key, $raw = self::CONTENT_RESOURCE);
 
@@ -49,18 +53,18 @@ interface CacheInterface
     public function set($key, ProcessorInterface $proc);
 
     /**
-     * has
+     * Checks if a key exists in cache.
      *
      * @param string $key
      *
-     * @return boolean
+     * @return bool
      */
     public function has($key);
 
     /**
-     * Delete the whole cache
+     * Delete the whole cache.
      *
-     * @return boolean
+     * @return bool
      */
     public function purge();
 
@@ -69,12 +73,12 @@ interface CacheInterface
      *
      * @param string $image
      *
-     * @return boolean
+     * @return bool
      */
     public function delete($image, $prefix = '');
 
     /**
-     * Set the filename prefix
+     * Set the filename prefix.
      *
      * @param string $prefix
      *
@@ -83,29 +87,27 @@ interface CacheInterface
     public function setPrefix($prefix);
 
     /**
-     * Get the filename prefix
+     * Get the filename prefix.
      *
      * @return string
      */
     public function getPrefix();
 
     /**
-     * Sets the cache lifetime
+     * Sets the cache lifetime.
      *
      * @return void
      */
     public function setExpiry($expires);
 
     /**
-     * createKey
+     * Creates a cachekey for a given src path.
      *
      * @param string $src
+     * @param string $prefix
      * @param string $fingerprint
-     * @param string  $prefix
-     * @param string  $suffix
      *
-     * @access public
-     * @return mixed
+     * @return string
      */
     public function createKey($src, $prefix = '', $fingerprint = null);
 }

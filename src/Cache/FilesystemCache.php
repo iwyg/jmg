@@ -68,6 +68,11 @@ class FilesystemCache extends AbstractCache
      */
     protected $metaKey;
 
+    /**
+     * time
+     *
+     * @var int
+     */
     protected $time;
 
     /**
@@ -155,6 +160,13 @@ class FilesystemCache extends AbstractCache
         return $this->deleteDir($this->path . DIRECTORY_SEPARATOR . $dir);
     }
 
+    /**
+     * setExpires
+     *
+     * @param mixed $minutes
+     *
+     * @return void
+     */
     protected function setExpires($minutes)
     {
         $this->time = time();

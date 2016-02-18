@@ -26,13 +26,13 @@ use Thapp\Jmg\Resolver\RecipeResolverInterface;
  */
 class UrlBuilder implements UrlBuilderInterface
 {
+    /** @var HttpSignerInterface */
     private $signer;
-    private $cachePrefix;
 
     /**
      * Constructor.
      *
-     * @param HttpSingerInterface $signer
+     * @param HttpSignerInterface $signer
      */
     public function __construct(HttpSignerInterface $signer = null)
     {
@@ -53,6 +53,9 @@ class UrlBuilder implements UrlBuilderInterface
         return $path;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getRecipeUri($source, $recipe, Parameters $params, FilterExpression $filters = null)
     {
         $path = $this->createRecipeUri($recipe, $source);
@@ -89,9 +92,10 @@ class UrlBuilder implements UrlBuilderInterface
      *
      * @return string
      */
-    protected function createImageUri($source,  Parameters $params, FilterExpression $filters = null, $prefix = '')
+    protected function createImageUri($source, Parameters $params, FilterExpression $filters = null, $prefix = '')
     {
-        return '/'.sprintf('%s/%s/%s', trim($prefix, '/'), (string)$params, $source, $this->getFiltersAsString($filters));
+        $filterString = $this->getFiltersAsString($filters);
+        return '/'.sprintf('%s/%s/%s', trim($prefix, '/'), (string)$params, $source, $filterString);
     }
 
     /**
@@ -141,14 +145,13 @@ class UrlBuilder implements UrlBuilderInterface
     /**
      * createRecipeUri
      *
-     * @param mixed $recipe
-     * @param mixed $source
+     * @param string $recipe
+     * @param string $source
      *
-     * @return void
+     * @return string
      */
     protected function createRecipeUri($recipe, $source)
     {
         return '/'.trim($recipe, '/') . '/' . trim($source, '/');
     }
-
 }

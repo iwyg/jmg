@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This File is part of the Thapp\Jmg\Image\Filter\Imagick package
+ * This File is part of the Thapp\Jmg package
  *
  * (c) iwyg <mail@thomas-appel.com>
  *
@@ -14,18 +14,22 @@ namespace Thapp\Jmg\Image\Filter\Gmagick;
 use Thapp\Jmg\ProcessorInterface;
 use Thapp\Jmg\Filter\AbstractFilter;
 use Thapp\Jmg\Filter\FilterInterface;
+use Thapp\Image\Driver\Gmagick\Image;
 
 /**
  * @class AbstractImagickFilter
  *
- * @package Thapp\Jmg\Image\Filter\Imagick
+ * @package Thapp\Jmg
  * @version $Id$
  * @author iwyg <mail@thomas-appel.com>
  */
 abstract class AbstractGmagickFilter extends AbstractFilter implements FilterInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function supports(ProcessorInterface $proc)
     {
-        return $proc->getDriver() instanceof \Thapp\Image\Driver\Gmagick\Image;
+        return $proc->getDriver() instanceof Image;
     }
 }

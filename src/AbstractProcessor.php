@@ -22,11 +22,22 @@ use Thapp\Jmg\Exception\ProcessorException;
  */
 abstract class AbstractProcessor implements ProcessorInterface
 {
+    /** @var \Thapp\Jmg\FilterExpression */
     protected $filters;
+
+    /** @var array */
     protected $options;
+
+    /** @var \Thapp\Jmg\Resource\ResourceInterface */
     protected $resource;
+
+    /** @var bool */
     protected $processed;
+
+    /** @var string */
     protected $targetFormat;
+
+    /** @var array */
     protected $targetSize;
 
     /**
@@ -50,22 +61,12 @@ abstract class AbstractProcessor implements ProcessorInterface
      */
     public function close()
     {
-        $this->processed = false;
+        $this->processed    = false;
         $this->targetFormat = null;
-        $this->targetSize = null;
+        $this->targetSize   = null;
 
         $this->unload();
-
         $this->resource = null;
-    }
-
-    protected function unload()
-    {
-        if (null !== $this->resource && is_resource($handle = $this->resource->getHandle())) {
-            fclose($handle);
-        }
-
-        $this->resource     = null;
     }
 
     /**
@@ -79,7 +80,7 @@ abstract class AbstractProcessor implements ProcessorInterface
 
         $this->targetSize = [$params['width'], $params['height']];
 
-        switch($params['mode']) {
+        switch ($params['mode']) {
             case static::IM_NOSCALE:
                 break;
             case static::IM_RESIZE:
@@ -146,28 +147,22 @@ abstract class AbstractProcessor implements ProcessorInterface
     }
 
     /**
-     * getSourceFormat
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getSourceFormat()
     {
-        if (null === $this->resource) {
+        if (null === $this->resource ||
+            ($formats = array_flip(static::formats()) &&
+            !isset($formats[$mime = $this->resource->getMimeType()]))
+        ) {
             return;
         }
 
-        $formats = array_flip(static::formats());
-
-        if (isset($formats[$mime = $this->resource->getMimeType()])) {
-            return $formats[$mime];
-        }
+        return $formats[$mime];
     }
 
     /**
-     * getSourceMimeTime
-     *
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getSourceMimeType()
     {
@@ -175,9 +170,7 @@ abstract class AbstractProcessor implements ProcessorInterface
     }
 
     /**
-     * get the image output MimeType
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getMimeType()
     {
@@ -233,23 +226,22 @@ abstract class AbstractProcessor implements ProcessorInterface
             return;
         }
 
-        if ($filters = $this->filters->resolve($filter)) {
-            $found = false;
-
-            foreach ($filters as $filter) {
-                if ($filter->supports($this)) {
-                    $filter->apply($this, $options);
-                    $found = true;
-                    break;
-                }
-            }
-
-            if (!$found) {
-                throw new \RuntimeException('No sutable filter found.');
-            }
-        } else {
+        if (!$filters = $this->filters->resolve($filter)) {
             throw new \RuntimeException('Filter "' . $filter . '" not found.');
         }
+
+        $filters = array_filter($filters, function ($f) {
+            return $f->supports($this);
+        });
+
+        if (empty($filters)) {
+            throw new \RuntimeException('No suitable filter found.');
+        }
+
+        foreach ($filters as $filter) {
+            $filter->apply($this, $options);
+        }
+
     }
 
     /**
@@ -294,6 +286,20 @@ abstract class AbstractProcessor implements ProcessorInterface
         if (array_key_exists($format, $formats)) {
             return $formats[$format];
         }
+    }
+
+    /**
+     * unload
+     *
+     * @return void
+     */
+    protected function unload()
+    {
+        if (null !== $this->resource && is_resource($handle = $this->resource->getHandle())) {
+            fclose($handle);
+        }
+
+        $this->resource = null;
     }
 
     /**
