@@ -20,43 +20,34 @@ namespace Thapp\Jmg\Resource;
  */
 abstract class AbstractResource implements ResourceInterface
 {
-    /**
-     * contents
-     *
-     * @var string
-     */
+    /** @var string */
     protected $contents;
 
-    /**
-     * lastModified
-     *
-     * @var int
-     */
+    /** @var int */
     protected $lastModified;
 
-    /**
-     * mimeType
-     *
-     * @var mixed
-     */
+    /** @var string */
     protected $mimeType;
 
-    /**
-     * path
-     *
-     * @var string
-     */
+    /** @var string */
     protected $path;
 
-    /**
-     * @var boolean
-     */
+    /** @var bool */
     protected $fresh;
 
+    /** @var string */
+    protected $hash;
+
     /**
-     * isLocal
-     *
-     * @return boolean
+     * {@inheritdoc}
+     */
+    public function getHash()
+    {
+        return null !== $this->contents ? hash('sha1', $this->getContents()) : null;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function isLocal()
     {
@@ -64,10 +55,7 @@ abstract class AbstractResource implements ResourceInterface
     }
 
     /**
-     * isFresh
-     *
-     * @access public
-     * @return void
+     * {@inheritdoc}
      */
     public function isFresh($time = null)
     {
@@ -75,14 +63,13 @@ abstract class AbstractResource implements ResourceInterface
     }
 
     /**
-     * isFresh
+     * Marks resource as modified.
      *
-     * @access public
      * @return void
      */
     public function setFresh($fresh)
     {
-        return $this->fresh = true;
+        $this->fresh = true;
     }
 
     /**

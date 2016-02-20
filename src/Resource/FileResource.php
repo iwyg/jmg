@@ -72,6 +72,7 @@ class FileResource extends AbstractResource implements FileResourceInterface
      */
     public function setFresh($fresh)
     {
+        return null;
     }
 
     /**
@@ -79,6 +80,7 @@ class FileResource extends AbstractResource implements FileResourceInterface
      */
     public function setContents($contents)
     {
+        return null;
     }
 
     /**
@@ -86,6 +88,7 @@ class FileResource extends AbstractResource implements FileResourceInterface
      */
     public function setLastModified($time)
     {
+        return null;
     }
 
     /**

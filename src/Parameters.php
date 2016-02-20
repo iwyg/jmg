@@ -25,6 +25,15 @@ class Parameters
     /** @var string **/
     const P_SEPARATOR = '/';
 
+    const Q_MAP = [
+        'scale'      => ProcessorInterface::IM_RSIZEPERCENT,
+        'pixel'      => ProcessorInterface::IM_RSIZEPXCOUNT,
+        'scale-crop' => ProcessorInterface::IM_SCALECROP,
+        'crop'       => ProcessorInterface::IM_CROP,
+        'resize'     => ProcessorInterface::IM_RESIZE,
+        'resize-fit' => ProcessorInterface::IM_RSIZEFIT
+    ];
+
     /** @var string **/
     private $str;
 
@@ -138,6 +147,16 @@ class Parameters
     public function __toString()
     {
         return $this->asString();
+    }
+
+    /**
+     * toQueryString
+     *
+     * @return string
+     */
+    public function toQueryString()
+    {
+        return '?' . http_build_query($this->all());
     }
 
     /**
@@ -284,5 +303,46 @@ class Parameters
     public static function fromString($paramString, $separator = self::P_SEPARATOR)
     {
         return new static(static::parseString($paramString, $separator), $separator);
+    }
+
+    public static function fromQuery(array $query)
+    {
+        $query = static::mapMode($query);
+
+
+        $params = array_merge($default = static::defaults(), $query);
+
+        if (null === $params['mode']) {
+            $params['mode'] = 0;
+        }
+
+        extract(array_intersect_key($params, $default));
+
+        return new static(static::sanitize($mode, $width, $height, $gravity, $background));
+    }
+
+    private static function mapMode(array $query)
+    {
+        $map = [
+            'mode'=> isset($query['mode']) ? (int)$query['mode'] : ProcessorInterface::IM_NOSCALE,
+        ];
+
+        if (empty($query)) {
+            return $map;
+        }
+
+        $map = array_merge($map, static::Q_MAP);
+        $type = array_reduce(array_keys($query), function ($a, $b) use ($map) {
+            return isset($map[$b]) ? $b :
+                (isset($map[$a]) ? $a :  'mode');
+        });
+
+        $query['mode'] = $map[$type];
+
+        if (is_numeric($query[$type])) {
+            $query['width'] = $type === 'scale' ? (float)$query[$type] : (int)$query[$type];
+        }
+
+        return $query;
     }
 }

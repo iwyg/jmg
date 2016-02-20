@@ -24,6 +24,7 @@ use Thapp\Jmg\ProcessorInterface;
 class CachedResource extends AbstractResource implements CachedResourceInterface
 {
     protected $key;
+    protected $hash;
     protected $width;
     protected $height;
 
@@ -38,12 +39,18 @@ class CachedResource extends AbstractResource implements CachedResourceInterface
         $this->key = $key;
         $this->path = $path;
         $this->contents = $proc->getContents();
+        $this->hash = parent::getHash();
 
         $this->mimeType     = $proc->getMimeType();
         $this->lastModified = $proc->getLastModTime();
         $this->fresh = false;
 
         $this->setSize($proc);
+    }
+
+    public function getHash()
+    {
+        return $this->hash;
     }
 
     /**
@@ -125,6 +132,7 @@ class CachedResource extends AbstractResource implements CachedResourceInterface
          'key'          => $this->key,
          'path'         => $this->path,
          'mimeType'     => $this->mimeType,
+         'hash'         => $this->hash,
          'lastModified' => $this->lastModified,
          'width'        => $this->width,
          'height'       => $this->height
@@ -145,6 +153,7 @@ class CachedResource extends AbstractResource implements CachedResourceInterface
         $this->key          = $data['key'];
         $this->path         = $data['path'];
         $this->mimeType     = $data['mimeType'];
+        $this->hash         = $data['hash'];
         $this->lastModified = $data['lastModified'];
         $this->width        = $data['width'];
         $this->height       = $data['height'];

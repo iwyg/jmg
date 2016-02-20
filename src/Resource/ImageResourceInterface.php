@@ -18,7 +18,7 @@ namespace Thapp\Jmg\Resource;
  * @version $Id$
  * @author iwyg <mail@thomas-appel.com>
  */
-interface ImageResourceInterface
+interface ImageResourceInterface extends ResourceInterface
 {
     public function getWidth();
 

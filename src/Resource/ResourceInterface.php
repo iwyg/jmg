@@ -21,35 +21,44 @@ namespace Thapp\Jmg\Resource;
 interface ResourceInterface
 {
     /**
-     * isLocal
+     * Returns true if resource is local.
      *
      * @return boolean
      */
     public function isLocal();
 
     /**
-     * isFresh
+     * Determines if the resource was modified.
      *
-     * @return boolean
+     * @param int $time unix timestamp.
+     *
+     * @return bool
      */
-    public function isFresh();
+    public function isFresh($time = null);
 
     /**
-     * getContents
+     * getLastModified
+     *
+     * @return int
+     */
+    public function getLastModified();
+
+    /**
+     * Returns the resource contents
      *
      * @return string
      */
     public function getContents();
 
     /**
-     * getMimeType
+     * Returns the resource mime time
      *
      * @return string
      */
     public function getMimeType();
 
     /**
-     * getPath
+     * Retrurns the resource path
      *
      * @return string
      */
@@ -59,4 +68,9 @@ interface ResourceInterface
      * @return string
      */
     public function getFileName();
+
+    /**
+     * @return string
+     */
+    public function getHash();
 }

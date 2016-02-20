@@ -45,7 +45,8 @@ class UrlSigner implements HttpSignerInterface
      */
     public function sign($path, Parameters $params, FilterExpression $filters = null)
     {
-        return $path.'?'.http_build_query([$this->qkey => $this->createSignature($path, $params, $filters)]);
+        $prefix = false !== mb_strpos($path, '?') ? '&' : '?';
+        return $path.$prefix.http_build_query([$this->qkey => $this->createSignature($path, $params, $filters)]);
     }
 
     /**

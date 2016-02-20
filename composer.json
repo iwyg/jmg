@@ -11,14 +11,12 @@
   ],
   "type": "package",
   "require": {
-    "php":" >=5.5.0",
+    "php":" >=5.6.0",
     "thapp/image": "dev-develop",
-    "psr/http-message":"dev-master",
-    "symfony/http-foundation": "~2.5"
+    "psr/http-message":"dev-master"
   },
   "require-dev": {
-    "phpunit/phpunit": "~4.8@dev",
-    "mikey179/vfsStream": "~1@dev",
+    "phpunit/phpunit": "5.2.*@dev",
     "zendframework/zend-diactoros": "dev-master"
   },
   "autoload": {

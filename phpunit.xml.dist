@@ -17,12 +17,10 @@
   <filter>
     <blacklist>
       <directory suffix=".php">./vendor</directory>
-      <directory suffix=".php">./Tests</directory>
+      <directory suffix=".php">./tests</directory>
     </blacklist>
+    <whitelist processUncoveredFilesFromWhitelist="true">
+        <directory suffix=".php">./src</directory>
+    </whitelist>
   </filter>
-  <logging>
-    <log type="coverage-html" target="report" showUncoveredFiles="true"/>
-    <log type="coverage-text" target="php://stdout" showUncoveredFiles="true"/>
-    <!--<log type="coverage-clover" target="/tmp/coverage/coverage.xml" />-->
-  </logging>
 </phpunit>

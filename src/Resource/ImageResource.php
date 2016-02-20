@@ -22,8 +22,11 @@ namespace Thapp\Jmg\Resource;
  */
 class ImageResource extends AbstractResource implements ImageResourceInterface
 {
-    protected $width;
-    protected $height;
+    /** @var int */
+    private $width;
+
+    /** @var int */
+    private $height;
 
     /**
      * Constructor.
@@ -34,8 +37,8 @@ class ImageResource extends AbstractResource implements ImageResourceInterface
      */
     public function __construct($path = null, $width = null, $height = null)
     {
-        $this->path = $path;
-        $this->width = $width;
+        $this->path   = $path;
+        $this->width  = $width;
         $this->height = $height;
     }
 
@@ -68,7 +71,7 @@ class ImageResource extends AbstractResource implements ImageResourceInterface
      *
      * @return int
      */
-    protected function widthFromPath()
+    private function widthFromPath()
     {
         $this->detectSize();
 
@@ -80,7 +83,7 @@ class ImageResource extends AbstractResource implements ImageResourceInterface
      *
      * @return int
      */
-    protected function heightFromPath()
+    private function heightFromPath()
     {
         $this->detectSize();
 
@@ -92,7 +95,7 @@ class ImageResource extends AbstractResource implements ImageResourceInterface
      *
      * @return void
      */
-    protected function detectSize()
+    private function detectSize()
     {
         if (null !== $this->getPath() && $this->isLocal()) {
             $size = getimagesize($this->getPath());
@@ -100,7 +103,7 @@ class ImageResource extends AbstractResource implements ImageResourceInterface
             $size = getimagesizefromstring($this->getContents());
         }
 
-        $this->width = $size[0];
+        $this->width  = $size[0];
         $this->height = $size[1];
     }
 }
