@@ -21,11 +21,7 @@ namespace Thapp\Jmg\Resolver;
  */
 class PathResolver implements PathResolverInterface
 {
-    /**
-     * mappings
-     *
-     * @var array
-     */
+    /** @var array */
     private $mappings;
 
     /**
@@ -57,7 +53,7 @@ class PathResolver implements PathResolverInterface
             return $this->mappings[$alias];
         }
 
-        return null;//$path;
+        return null;
     }
 
     private function hasAlias($alias)

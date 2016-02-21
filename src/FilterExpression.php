@@ -111,6 +111,10 @@ class FilterExpression
             return $this->expr = $this->params;
         }
 
+        if (null === $this->params) {
+            return '';
+        }
+
         return $this->expr = $this->compileParams();
     }
 
@@ -230,6 +234,7 @@ class FilterExpression
                 } elseif (0 === strpos($val, '0x') || strlen((string)(int)$val) === strlen($val)) {
                     return $this->getNumVal($val);
                 }
+                break;
             case in_array($val, ['true', 'false']):
                 return 'true' === $val ? true : false;
             default:

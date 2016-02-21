@@ -42,9 +42,9 @@ class UrlBuilder implements UrlBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function getUri($source, Parameters $params, FilterExpression $filters = null, $prefix = '')
+    public function getUri($source, Parameters $params, FilterExpression $filters = null, $prefix = '', $q = false)
     {
-        $path = $this->createImageUri($source, $params, $filters, $prefix);
+        $path = $this->createImageUri($source, $params, $filters, $prefix, $q);
 
         if (null !== $this->signer) {
             return $this->signer->sign($path, $params, $filters);
@@ -92,10 +92,18 @@ class UrlBuilder implements UrlBuilderInterface
      *
      * @return string
      */
-    protected function createImageUri($source, Parameters $params, FilterExpression $filters = null, $prefix = '')
+    protected function createImageUri($src, Parameters $params, FilterExpression $filters = null, $pfx = '', $q = false)
     {
-        $filterString = $this->getFiltersAsString($filters);
-        return '/'.sprintf('%s/%s/%s', trim($prefix, '/'), (string)$params, $source, $filterString);
+        $prefix = trim($pfx, '/');
+
+        if ($q) {
+            $queryString = http_build_query($params->all());
+            $path = sprintf('%s/%s?%s', $prefix, $src, $queryString);
+        } else {
+            $filterString = $this->getFiltersAsString($filters);
+            $path = sprintf('%s/%s/%s', trim($prefix, '/'), (string)$params, $src, $filterString);
+        }
+        return '/'.$path;
     }
 
     /**
