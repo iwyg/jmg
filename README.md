@@ -9,10 +9,6 @@
 
 ## Just In Time Image manipulation: Library for HTTP based image manipulation
 
-By default Jmg uses the [`Thapp/Image`](https://packagist.org/packages/thapp/image)
-php packageto process images, but will also work with the fantastic
- [`Imagine`](https://packagist.org/packages/imagine/imagine) library.
-
 ## Installation
 
 Require `thapp/jmg` in your `composer.json` file:
@@ -78,7 +74,7 @@ $src = $loader->load($path . '/image.jpg');
 
 ### Custom loaders
 
-You may create your own loaders, e.g. for loading images from a remote source like an Amazon s3 storage or an ftp server. 
+You may create your own loaders, e.g. for loading images from a remote source like an Amazon s3 storage or an ftp server.
 
 Your custom loader must implement the `Thapp\Jmg\Loader\LoaderInterface` or simply extend from `Thapp\Jmg\Loader\AbstractLoader`.
 
@@ -96,7 +92,7 @@ class AWSLoader extends AbstractLoader
     {
         //…
     }
-    
+
     public function supports($path)
     {
         //…
@@ -133,7 +129,7 @@ if ($resource = $res->resolve('images/source.jpg', $params)) {
 
 ## Framework integration
 
-Jmg comes prebundled with support for Laravel 5.* and Silex. 
+Jmg comes prebundled with support for Laravel 5.* and Silex.
 
 ### Laravel 5.*
 
@@ -163,40 +159,40 @@ from the command line.
 
 `config/jmg.php`
 
-**processor**  
-The processor, default is `image`. `imagine` is experimental and likely to be removed from future releases. 
-   
-**driver**:  
+**processor**
+The processor, default is `image`. `imagine` is experimental and likely to be removed from future releases.
+
+**driver**:
 The image driver. Available drivers are `imagick`, `im` (imagemagick binary), and `gd`.
-  
-**convert_path**  
+
+**convert_path**
 If `im` is set for the driver, specify the path to the convert binary here.
-  
-**identify_path**  
+
+**identify_path**
 If `im` is set for the driver, specify the path to the identify binary here.
-  
-**paths**  
-Source paths aliases, e.g. 
+
+**paths**
+Source paths aliases, e.g.
 
 ```php
 'images' => public_path().'/images', // will be available at `/images/<params>/image.jpg`
 'remote' => 'http://images.example.com' // may be empty if you use absolute urls
-``` 
+```
 
-**loaders**  
+**loaders**
 
 ```php
 'loaders' => [
     'images' => 'file',
     'remote' => 'http',
 ]
-``` 
+```
 
-**disable\_dynamic\_processing**  
+**disable\_dynamic\_processing**
 Disables image processing via dynamic urls.
 
-**mode\_constraints**  
-Set mode constraints on scaling values. This will only affect dynamic processing via URL. 
+**mode\_constraints**
+Set mode constraints on scaling values. This will only affect dynamic processing via URL.
 
 **recipes**
 Predefined image formats, e.g.
@@ -204,12 +200,12 @@ Predefined image formats, e.g.
 ```php
 'thumbs' => [
     'images', '1/0/400,filter:palette;p=rgb:clrz;c=#0ff' // will be available at `/thumbs/image.jpg`
-], 
+],
 ```
-**default\_cache**  
+**default\_cache**
 The default caching type. Shipped types are `file`
 
-**default\_cache\_path**  
+**default\_cache\_path**
 Directory path for local caches.
 
 ### Silex

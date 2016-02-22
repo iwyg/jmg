@@ -17,7 +17,9 @@
   },
   "require-dev": {
     "phpunit/phpunit": "5.2.*@dev",
-    "zendframework/zend-diactoros": "dev-master"
+    "zendframework/zend-diactoros": "dev-master",
+    "mikey179/vfsStream": "^1.6",
+    "symfony/http-foundation": "^3.0"
   },
   "autoload": {
     "psr-4": {
