@@ -22,8 +22,13 @@ use Thapp\Image\Color\Parser;
  */
 class FilterExpression
 {
+    /** @var string */
     private $expr;
+
+    /** @var params */
     private $params;
+
+    /** @var string */
     private $prefix;
 
     /**
@@ -228,13 +233,12 @@ class FilterExpression
                 return null;
             case Parser::isHex($val):
                 return hexdec(ltrim(Parser::normalizeHex($val), '#'));
+            case is_numeric($val) && 0 !== substr_count($val, '.'):
+                return (float)$val;
+            case 0 === strpos($val, '0x') || strlen((string)(int)$val) === strlen($val):
+                return $this->getNumVal($val);
             case is_numeric($val):
-                if (0 !== substr_count($val, '.')) {
-                    return (float)$val;
-                } elseif (0 === strpos($val, '0x') || strlen((string)(int)$val) === strlen($val)) {
-                    return $this->getNumVal($val);
-                }
-                break;
+                return (int)$val;
             case in_array($val, ['true', 'false']):
                 return 'true' === $val ? true : false;
             default:
