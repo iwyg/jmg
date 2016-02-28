@@ -20,7 +20,24 @@ namespace Thapp\Jmg\Resource;
  */
 interface ImageResourceInterface extends ResourceInterface
 {
+    /**
+     * getWidth
+     *
+     * @return int
+     */
     public function getWidth();
 
+    /**
+     * getHeight
+     *
+     * @return int
+     */
     public function getHeight();
+
+    /**
+     * getColorSpace
+     *
+     * @return string
+     */
+    public function getColorSpace();
 }

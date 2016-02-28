@@ -27,6 +27,7 @@ class CachedResource extends AbstractResource implements CachedResourceInterface
     protected $hash;
     protected $width;
     protected $height;
+    protected $colorspace;
 
     /**
      * @param string $path
@@ -40,6 +41,7 @@ class CachedResource extends AbstractResource implements CachedResourceInterface
         $this->path = $path;
         $this->contents = $proc->getContents();
         $this->hash = parent::getHash();
+        $this->colorspace = $proc->getColorSpace();
 
         $this->mimeType     = $proc->getMimeType();
         $this->lastModified = $proc->getLastModTime();
@@ -48,9 +50,20 @@ class CachedResource extends AbstractResource implements CachedResourceInterface
         $this->setSize($proc);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getHash()
     {
         return $this->hash;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getColorSpace()
+    {
+        return $this->colorspace;
     }
 
     /**
@@ -135,7 +148,8 @@ class CachedResource extends AbstractResource implements CachedResourceInterface
          'hash'         => $this->hash,
          'lastModified' => $this->lastModified,
          'width'        => $this->width,
-         'height'       => $this->height
+         'height'       => $this->height,
+         'colorspace'   => $this->colorspace
         ]);
     }
 
@@ -157,6 +171,7 @@ class CachedResource extends AbstractResource implements CachedResourceInterface
         $this->lastModified = $data['lastModified'];
         $this->width        = $data['width'];
         $this->height       = $data['height'];
+        $this->colorspace   = $data['colorspace'];
 
         $this->contents = $this->initContent();
     }

@@ -28,6 +28,9 @@ class ImageResource extends AbstractResource implements ImageResourceInterface
     /** @var int */
     private $height;
 
+    /** @var string */
+    private $coloespace;
+
     /**
      * Constructor.
      *
@@ -35,11 +38,12 @@ class ImageResource extends AbstractResource implements ImageResourceInterface
      * @param int $width
      * @param int $height
      */
-    public function __construct($path = null, $width = null, $height = null)
+    public function __construct($path = null, $width = null, $height = null, $colorspace = null)
     {
-        $this->path   = $path;
-        $this->width  = $width;
-        $this->height = $height;
+        $this->path       = $path;
+        $this->width      = $width;
+        $this->height     = $height;
+        $this->colorspace = $colorspace;
     }
 
     /**
@@ -64,6 +68,14 @@ class ImageResource extends AbstractResource implements ImageResourceInterface
         }
 
         return $this->heightFromPath();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getColorSpace()
+    {
+        return $this->colorspace;
     }
 
     /**

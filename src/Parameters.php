@@ -253,6 +253,8 @@ class Parameters
      */
     private static function sanitize($mode = null, $width = null, $height = null, $gravity = null, $background = null)
     {
+        $gravity = (int)$gravity;
+
         if (null === $mode) {
             $mode = 0;
         }
@@ -280,8 +282,12 @@ class Parameters
             $width = null;
         }
 
-        $width  = ($mode !== 1 && $mode !== 2) ? $width : (int)$width;
-        $height = ($mode !== 1 && $mode !== 2) ? $height : (int)$height;
+        if (5 === $mode) {
+            $width = (float)$width;
+        } else {
+            $width = null !== $width ? (int)$width : 0;
+            $height = null !== $height ? (int)$height : 0;
+        }
 
         return compact('mode', 'width', 'height', 'gravity', 'background');
     }
@@ -331,6 +337,7 @@ class Parameters
             return $map;
         }
 
+
         $map = array_merge($map, static::Q_MAP);
         $type = array_reduce(array_keys($query), function ($a, $b) use ($map) {
             return isset($map[$b]) ? $b :
@@ -339,9 +346,10 @@ class Parameters
 
         $query['mode'] = $map[$type];
 
-        if (is_numeric($query[$type])) {
-            $query['width'] = $type === 'scale' ? (float)$query[$type] : (int)$query[$type];
-        }
+        //if (is_numeric($query[$type])) {
+        //    $query['width'] = $type === 'scale' ? (float)$query[$type] : (int)$query[$type];
+        //}
+
 
         return $query;
     }

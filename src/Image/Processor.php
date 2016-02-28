@@ -116,6 +116,14 @@ class Processor extends AbstractProcessor
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getColorSpace()
+    {
+        return $this->image->getColorSpace();
+    }
+
+    /**
      * Get the image ratio.
      *
      * @return float

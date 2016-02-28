@@ -11,8 +11,8 @@
 
 namespace Thapp\Jmg\Resource;
 
-use \Thapp\Jmg\ProcessorInterface;
-use \Thapp\Jmg\Cache\Client\ClientInterface;
+use Thapp\Jmg\ProcessorInterface;
+use Thapp\Jmg\Cache\Client\ClientInterface;
 
 /**
  * @class CachedResource extends AbstractResource

@@ -278,7 +278,7 @@ class ImageResolver implements ImageResolverInterface
     {
         list ($w, $h) = $processor->getTargetSize();
 
-        $resource = new ImageResource(null, $w, $h);
+        $resource = new ImageResource(null, $w, $h, $processor->getColorSpace());
 
         $resource->setContents($processor->getContents());
         $resource->setFresh(!$processor->isProcessed());

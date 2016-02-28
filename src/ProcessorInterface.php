@@ -105,6 +105,13 @@ interface ProcessorInterface
     public function getFileFormat();
 
     /**
+     * Get the colorspace of the image.
+     *
+     * @return string
+     */
+    public function getColorSpace();
+
+    /**
      * Get the image output extension
      *
      * @return string
