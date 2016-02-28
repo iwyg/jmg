@@ -135,7 +135,10 @@ class JitImageControllerProvider implements ControllerProviderInterface
                 continue;
             }
 
-            $route = $controllers->get('/'.trim($suffix).'/{'.trim($alias, '/').'}/{id}', [$app['jmg.controller'], 'getCachedAction'])
+            $route = $controllers->get(
+                '/'.trim($suffix).'/{'.trim($alias, '/').'}/{id}',
+                [$app['jmg.controller'], 'getCachedAction']
+            )
                 ->setDefault('path', $alias)
                 ->setRequirements(['id' => '(.*\/){1}.*']);
 

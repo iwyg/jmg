@@ -60,7 +60,8 @@ class JitImageServiceProvider implements ServiceProviderInterface, BootableProvi
         $class  = $useImagine ? 'Thapp\Jmg\Imagine\Processor' : 'Thapp\Jmg\Image\Processor';
 
         $app['jmg.processor'] = function () use ($app, $class, $useImagine) {
-            $source = $useImagine ? $this->getImagineClass($app['jmg.driver']) : $this->getSourceClass($app['jmg.driver']);
+            $source = $useImagine ?
+                $this->getImagineClass($app['jmg.driver']) : $this->getSourceClass($app['jmg.driver']);
             return new $class(
                 new $source,
                 $app['jmg.resolver_filter']

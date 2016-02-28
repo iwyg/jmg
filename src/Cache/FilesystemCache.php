@@ -84,8 +84,13 @@ class FilesystemCache extends AbstractCache
      * @param string $prefix
      * @param string $metaKey
      */
-    public function __construct($location = null, $metaPath = null, $expires = 10080, $prefix = 'fs_', $metaKey = 'meta')
-    {
+    public function __construct(
+        $location = null,
+        $metaPath = null,
+        $expires = 10080,
+        $prefix = 'fs_',
+        $metaKey = 'meta'
+    ) {
         $this->setExpires($expires);
         $this->path   = $location ?: getcwd();
         $this->metaPath = $metaPath ?: $this->path;

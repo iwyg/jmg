@@ -28,7 +28,7 @@ install:
 script:
   - if [[ $CODE_COVERAGE_LOG != 'true' ]]; then php vendor/bin/phpunit --verbose; fi;
   - if [[ $CODE_COVERAGE_LOG == 'true' ]]; then php vendor/bin/phpunit --coverage-clover coverage/clover.xml; fi;
-  - if [[ $CS_CHECK_ENABLED == 'true' ]]; then php vendor/bin/phpcs --standard=PSR2 --ignore=vendor/* --ignore=*/Fixures src tests; fi
+  - if [[ $CS_CHECK_ENABLED == 'true' ]]; then php vendor/bin/phpcs --standard=PSR2 --ignore=vendor/* --ignore=*/Fixures --ignore=*/Stubs src tests; fi
 
 after_script:
   - if [[ $CODE_COVERAGE_LOG == 'true' ]]; then php vendor/bin/coveralls; fi
