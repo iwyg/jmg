@@ -1,49 +1,53 @@
 # Jmg
 
 [![Author](http://img.shields.io/badge/author-iwyg-blue.svg?style=flat-square)](https://github.com/iwyg)
-[![Source Code](http://img.shields.io/badge/source-thapp/jmg-blue.svg?style=flat-square)](https://github.com/iwyg/jmg/tree/develop)
+[![Source Code](http://img.shields.io/badge/source-lucid/signal-blue.svg?style=flat-square)](https://github.com/iwyg/jmg/tree/develop)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://github.com/iwyg/jmg/blob/develop/LICENSE.md)
 
 [![Build Status](https://img.shields.io/travis/iwyg/jmg/develop.svg?style=flat-square)](https://travis-ci.org/iwyg/jmg)
-[![Total Downloads](https://img.shields.io/packagist/dt/thapp/jmg.svg?style=flat-square)](https://packagist.org/packages/thapp/jmg)
+[![Code Coverage](https://img.shields.io/coveralls/iwyg/jmg/develop.svg?style=flat-square)](https://coveralls.io/r/iwyg/jmg)
+[![HHVM](https://img.shields.io/hhvm/thapp/jmg/dev-develop.svg?style=flat-square)](http://hhvm.h4cc.de/package/thapp/jmg)
 
 ## Just In Time Image manipulation: Library for HTTP based image manipulation
 
 ## Installation
 
-Require `thapp/jmg` in your `composer.json` file:
-
-```json
-{
-    "require": {
-        "thapp/jmg":"dev-develop"
-    }
-}
+```bash
+> composer composer require thapp/jmg
 ```
 
-Installing:
+## Run tests
 
 ```bash
-$ composer install
+> composer install
+> vendor/bin/phpunit -c phpunit.xml.dist
 ```
 
-Updating:
+## Quick start
 
-```bash
-$ composer update
+```php
+<?php
+
+use Thapp\Jmg\Resolver\ImageResolver;
+
+$processor = new Thapp\Jmg\Image\Processor(
+	new Thapp\Image\Driver\Gd\Source
+);
+
+$images = new Thapp\Jmg\Resolver\ImageResolver(
+	$processor,
+	$pathResolver,
+	$loaderResolver
+	// ...
+);
+
 ```
-
-Run tests:
-
-```bash
-$ vendor/bin/phpunit -c phpunit.xml.dist
-```
-
 ## Core Concepts
 
 ### Source loaders and resolvers
 
-Jmg supports loading images from a variety of sources. In the example below, lets assume we have a local filesystem that hosts our images.
+Jmg supports loading images from a variety of sources. In the example below,
+lets assume we have a local filesystem that hosts our images.
 
 ```php
 <?php
