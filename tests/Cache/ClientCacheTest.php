@@ -75,7 +75,11 @@ class ClientCacheTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($cache->has('b.c'));
 
         $saveVals = ['a' => ['b' => true]];
-        $client->expects($this->once())->method('set')->with($this->getKey('jitimage'), $saveVals, CacheInterface::EXPIRY_NONE);
+        $client->expects($this->once())->method('set')->with(
+            $this->getKey('jitimage'),
+            $saveVals,
+            CacheInterface::EXPIRY_NONE
+        );
         unset($cache);
     }
 
@@ -89,7 +93,11 @@ class ClientCacheTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $cache = new ClientCache($client, 'jitimage');
-        $client->expects($this->exactly(0))->method('set')->with($this->getKey('jitimage'), $saveVals, CacheInterface::EXPIRY_NONE);
+        $client->expects($this->exactly(0))->method('set')->with(
+            $this->getKey('jitimage'),
+            $saveVals,
+            CacheInterface::EXPIRY_NONE
+        );
         unset($cache);
     }
 
