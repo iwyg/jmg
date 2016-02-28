@@ -25,6 +25,7 @@ class Parameters
     /** @var string **/
     const P_SEPARATOR = '/';
 
+    /** @var array **/
     const Q_MAP = [
         'scale'      => ProcessorInterface::IM_RSIZEPERCENT,
         'pixel'      => ProcessorInterface::IM_RSIZEPXCOUNT,
@@ -175,10 +176,16 @@ class Parameters
         return $this->str;
     }
 
-    public function setFromString($str)
+    /**
+     * Returns a new instance from a string.
+     *
+     * @param string $str
+     *
+     * @return self
+     */
+    public function createFromString($str)
     {
-        $this->str = null;
-        $this->params = static::parseString($str, $this->separator);
+        return new self(static::parseString($str, $this->separator));
     }
 
     /**
@@ -253,8 +260,6 @@ class Parameters
      */
     private static function sanitize($mode = null, $width = null, $height = null, $gravity = null, $background = null)
     {
-        $gravity = (int)$gravity;
-
         if (null === $mode) {
             $mode = 0;
         }
@@ -278,16 +283,20 @@ class Parameters
             $gravity    = null;
         }
 
-        if (0 == $mode) {
+        if (0 === $mode) {
             $width = null;
         }
 
         if (5 === $mode) {
             $width = (float)$width;
+        } elseif ($mode === 1) {
+            $width = null !== $width ? $width : 0;
+            $height = null !== $height ? $height : 0;
         } else {
-            $width = null !== $width ? (int)$width : 0;
-            $height = null !== $height ? (int)$height : 0;
+            $width = null !== $width ? (int)$width : $width;
+            $height = null !== $height ? (int)$height : $height;
         }
+
 
         return compact('mode', 'width', 'height', 'gravity', 'background');
     }

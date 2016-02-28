@@ -151,10 +151,8 @@ abstract class AbstractProcessor implements ProcessorInterface
      */
     public function getSourceFormat()
     {
-        if (null === $this->resource ||
-            ($formats = array_flip(static::formats()) &&
-            !isset($formats[$mime = $this->resource->getMimeType()]))
-        ) {
+        if (null === $this->resource || ($formats = array_flip(static::formats()))
+            && !isset($formats[$mime = $this->resource->getMimeType()])) {
             return;
         }
 

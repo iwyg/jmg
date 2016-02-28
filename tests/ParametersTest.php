@@ -31,6 +31,16 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @dataProvider queryParamProvider
+     */
+    public function itShouldCreateParamsFromQueryParams($q, $expected)
+    {
+        $params = Parameters::fromQuery($q);
+        $this->assertSame($expected, (string)$params);
+    }
+
+    /**
+     * @test
      * @dataProvider paramStringProvider
      */
     public function itShouldParseParamString($str, $expected)
@@ -43,10 +53,22 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
     public function paramStringProvider()
     {
         return [
-            ['2/300/300/5', ['mode' => 2, 'width' => 300, 'height' => 300, 'gravity' => 5, 'background' => null]],
-            ['0/400/499/4/19', ['mode' => 0, 'width' => null, 'height' => null, 'gravity' => null, 'background' => null]],
-            ['3/300/300/5/fff', ['mode' => 3, 'width' => 300, 'height' => 300, 'gravity' => 5, 'background' => hexdec('ffffff')]],
-            ['3/300/300/5/#fe0', ['mode' => 3, 'width' => 300, 'height' => 300, 'gravity' => 5, 'background' => hexdec('ffee00')]],
+            [
+                '2/300/300/5',
+                ['mode' => 2, 'width' => 300, 'height' => 300, 'gravity' => 5, 'background' => null]
+            ],
+            [
+                '0/400/499/4/19',
+                ['mode' => 0, 'width' => null, 'height' => null, 'gravity' => null, 'background' => null]
+            ],
+            [
+                '3/300/300/5/fff',
+                ['mode' => 3, 'width' => 300, 'height' => 300, 'gravity' => 5, 'background' => hexdec('ffffff')]
+            ],
+            [
+                '3/300/300/5/#fe0',
+                ['mode' => 3, 'width' => 300, 'height' => 300, 'gravity' => 5, 'background' => hexdec('ffee00')]
+            ],
         ];
     }
 
@@ -55,7 +77,7 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
     {
         $params = new Parameters;
 
-        $params->setFromString('0/100');
+        $params = $params->createFromString('0/100');
 
         $this->assertSame([
             'mode'       => 0,
@@ -65,7 +87,7 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
             'background' => null,
         ], $params->all());
 
-        $params->setFromString('2/200/400/3');
+        $params = $params->createFromString('2/200/400/3');
 
         $this->assertSame([
             'mode'       => 2,
@@ -210,7 +232,7 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame([
             'mode'       => 5,
-            'width'      => 400,
+            'width'      => (float)400,
             'height'     => null,
             'gravity'    => null,
             'background' => null,
@@ -228,5 +250,108 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
             'gravity'    => null,
             'background' => null,
         ], $params->all());
+    }
+
+    public function queryParamProvider()
+    {
+        return [
+            [
+                [
+                    'mode' => 0,
+                    'height' => 200
+                ],
+                '0'
+            ],
+            [
+                [
+                    'mode' => 1,
+                    'width' => 200,
+                    'height' => 400
+                ],
+                '1/200/400'
+            ],
+            [
+                [
+                    'mode' => 1,
+                    'width' => 200,
+                ],
+                '1/200/0'
+            ],
+            [
+                [
+                    'mode' => 1,
+                    'height' => 200,
+                ],
+                '1/0/200'
+            ],
+            [
+                [
+                    'mode' => 2,
+                    'height' => 200,
+                    'width' => 400
+                ],
+                '2/400/200/5'
+            ],
+            [
+                [
+                    'mode' => 2,
+                    'width' => 200,
+                    'height' => 400,
+                    'gravity' => 2
+                ],
+                '2/200/400/2'
+            ],
+            [
+                [
+                    'mode' => 3,
+                    'width' => 200,
+                    'height' => 400,
+                    'gravity' => 2
+                ],
+                '3/200/400/2'
+            ],
+            [
+                [
+                    'mode' => 3,
+                    'width' => 200,
+                    'height' => 400
+                ],
+                '3/200/400/5'
+            ],
+            [
+                [
+                    'mode' => 3,
+                    'width' => 200,
+                    'height' => 400,
+                    'background' => $c = 'f7f7f7'
+                ],
+                '3/200/400/5/' . hexdec($c)
+            ],
+            [
+                [
+                    'mode' => 4,
+                    'width' => 200,
+                    'height' => 200,
+                    'background' => 'f7f7f7'
+                ],
+                '4/200/200'
+            ],
+            [
+                [
+                    'mode' => 5,
+                    'width' => 200,
+                    'height' => 400,
+                ],
+                '5/200'
+            ],
+            [
+                [
+                    'mode' => 6,
+                    'width' => 200,
+                    'height' => 400,
+                ],
+                '6/200'
+            ]
+        ];
     }
 }

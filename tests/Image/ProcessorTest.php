@@ -69,11 +69,13 @@ class ProcessorTest extends AbstractProcessorTest
         $image->expects($this->any())->method('getSize')->willReturn(new Size($w, $h));
         $times = (0 !== $tw || 0 !== $th) ? 1 : 0;
 
-        $edit->expects($this->exactly($times))->method('resize')->will($this->returnCallback(function () use ($tw, $th) {
-            list ($size, ) = func_get_args();
-            $this->assertSame($tw, $size->getWidth());
-            $this->assertSame($th, $size->getHeight());
-        }));
+        $edit->expects($this->exactly($times))->method('resize')->will($this->returnCallback(
+            function () use ($tw, $th) {
+                list ($size, ) = func_get_args();
+                $this->assertSame($tw, $size->getWidth());
+                $this->assertSame($th, $size->getHeight());
+            }
+        ));
 
         try {
             $proc->process(Parameters::fromString($params));
@@ -129,7 +131,9 @@ class ProcessorTest extends AbstractProcessorTest
         list (, , , $gravity, $color) = array_pad(explode('/', $params), 5, null);
 
         if (null !== $color) {
-            $image->expects($this->once())->method('getPalette')->willreturn($p = $this->getMock('FakePalette', ['getColor']));
+            $image->expects($this->once())->method('getPalette')->willreturn(
+                $p = $this->getMock('FakePalette', ['getColor'])
+            );
         }
 
         try {
@@ -147,7 +151,10 @@ class ProcessorTest extends AbstractProcessorTest
 
         $image->expects($this->any())->method('getSize')->willReturn(new Size(100, 100));
 
-        $image->expects($this->once())->method('getPalette')->willreturn($p = $this->getMock('FakePalette', ['getColor']));
+        $image->expects($this->once())->method('getPalette')->willreturn(
+            $p = $this->getMock('FakePalette', ['getColor'])
+        );
+
         $p->method('getColor')->willreturn($color = $this->getMock('Thapp\Image\Color\ColorInterface'));
 
         $edit->expects($this->exactly(1))->method('crop')->will($this->returnCallback(function () use ($color) {
@@ -277,7 +284,7 @@ class ProcessorTest extends AbstractProcessorTest
         list ($proc, $image, $resource, $edit) = $this->prepareLoaded();
 
         $image->expects($this->exactly(1))->method('getFormat')->willReturn('png');
-        $resource->expects($this->exactly(2))->method('getMimeType')->willReturn('image/jpeg');
+        $resource->method('getMimeType')->willReturn('image/jpeg');
 
         $this->assertSame('image/png', $proc->getMimeType());
         $this->assertSame('image/jpeg', $proc->getSourceMimeType());
