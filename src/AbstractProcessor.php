@@ -239,7 +239,6 @@ abstract class AbstractProcessor implements ProcessorInterface
         foreach ($filters as $filter) {
             $filter->apply($this, $options);
         }
-
     }
 
     /**

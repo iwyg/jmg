@@ -13,6 +13,7 @@ namespace Thapp\Jmg\Tests\Image\Filter\Gd;
 
 use Thapp\Jmg\Image\Filter\Gd\Grayscale;
 use Thapp\Jmg\Tests\Image\Filter\GrayscaleFilterTest;
+
 /**
  * @class GrayscaleTest
  *

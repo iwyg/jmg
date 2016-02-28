@@ -20,7 +20,7 @@ use Thapp\Jmg\Resolver\LoaderResolverInterface;
  * @version $Id$
  * @author iwyg <mail@thomas-appel.com>
  */
-abstract class JmgLoaderProvider extends AppProvider
+abstract class JitImageLoaderProvider extends AppProvider
 {
     /**
      * {@inheritdoc}

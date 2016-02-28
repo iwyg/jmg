@@ -175,7 +175,6 @@ class FilterExpression
         $filters = [];
 
         foreach (explode(':', $str) as $filter) {
-
             if (0 === substr_count($filter, ';')) {
                 $filters[$filter] = [];
                 continue;
@@ -186,7 +185,7 @@ class FilterExpression
             $options = substr($filter, $pos + 1);
 
             foreach (explode(';', $options) as $option) {
-                list ($oname, $val) = $this->getOption($option);
+                list($oname, $val) = $this->getOption($option);
                 $opt[$oname] = $val;
             }
 
@@ -209,7 +208,7 @@ class FilterExpression
             $oname = $option;
             $val = null;
         } else {
-            list ($oname, $val) = explode('=', $option);
+            list($oname, $val) = explode('=', $option);
         }
 
         return [$oname, $this->getOptionValue($val)];
@@ -270,7 +269,6 @@ class FilterExpression
         $filters = [];
 
         foreach ($this->params as $fname => $options) {
-
             if (is_int($fname)) {
                 $fname   = $options;
                 $options = [];

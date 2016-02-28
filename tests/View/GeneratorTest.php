@@ -43,7 +43,6 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($string, $gen->cropAndResize(400, 400));
         $this->assertSame($string, $gen->crop(400, 400));
         $this->assertSame($string, $gen->get());
-
     }
 
     /** @test */

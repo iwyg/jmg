@@ -28,7 +28,6 @@ class Palette extends AbstractFilter
      */
     public function apply(ProcessorInterface $proc, array $options = [])
     {
-
         $this->setOptions($options);
 
         $image = $proc->getDriver();

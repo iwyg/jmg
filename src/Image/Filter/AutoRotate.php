@@ -22,7 +22,7 @@ use Thapp\Image\Filter\AutoRotate as ImageAutoRotate;
  * @version $Id$
  * @author iwyg <mail@thomas-appel.com>
  */
-class Rotate extends AbstractFilter
+class AutoRotate extends AbstractFilter
 {
     /**
      * {@inheritdoc}

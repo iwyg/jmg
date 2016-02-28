@@ -182,7 +182,7 @@ class FilesystemCache extends AbstractCache
      */
     protected function isValid($meta)
     {
-         return self::EXPIRY_NONE === $this->expires ? true : ($this->time - filemtime($meta)) <= $this->expires;
+        return self::EXPIRY_NONE === $this->expires ? true : ($this->time - filemtime($meta)) <= $this->expires;
     }
 
     /**
@@ -194,7 +194,7 @@ class FilesystemCache extends AbstractCache
      */
     private function getMetaPath($key)
     {
-        list ($path, $file) = array_pad(explode('.', $key), 2, null);
+        list($path, $file) = array_pad(explode('.', $key), 2, null);
 
         return $this->metaPath.DIRECTORY_SEPARATOR.$path.DIRECTORY_SEPARATOR.$file.'.'. $this->metaKey;
     }
@@ -251,7 +251,7 @@ class FilesystemCache extends AbstractCache
     {
         $parsed = $this->parseKey($key);
 
-        list ($dir, $file) = $parsed;
+        list($dir, $file) = $parsed;
 
         return sprintf('%s%s%s%s%s', $this->path, DIRECTORY_SEPARATOR, $dir, DIRECTORY_SEPARATOR, $file);
     }

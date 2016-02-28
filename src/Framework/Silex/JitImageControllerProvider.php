@@ -24,7 +24,7 @@ use Thapp\Jmg\Framework\Common\ProviderHelperTrait;
  * @version $Id$
  * @author iwyg <mail@thomas-appel.com>
  */
-class JmgControllerProvider implements ControllerProviderInterface
+class JitImageControllerProvider implements ControllerProviderInterface
 {
     use ProviderHelperTrait;
 
@@ -67,7 +67,7 @@ class JmgControllerProvider implements ControllerProviderInterface
      */
     protected function registerDynamicController(Application $app, ControllerCollection $controllers)
     {
-        list ($pattern, $params, $source, $filter) = $this->getPathRegexp();
+        list($pattern, $params, $source, $filter) = $this->getPathRegexp();
 
         foreach ($app['jmg.paths'] as $path => $filePath) {
             $path = rtrim($path, '/');

@@ -20,7 +20,7 @@ use Thapp\Jmg\Resolver\FilterResolverInterface;
  * @version $Id$
  * @author iwyg <mail@thomas-appel.com>
  */
-abstract class JmgFilterProvider extends AppProvider
+abstract class JitImageFilterProvider extends AppProvider
 {
     /**
      * {@inheritdoc}

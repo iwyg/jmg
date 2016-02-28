@@ -34,4 +34,3 @@ class Modulate extends AbstractGmagickFilter
         return new GmagickModulate($bri, $sat, $hue);
     }
 }
-

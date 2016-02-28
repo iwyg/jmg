@@ -24,7 +24,7 @@ use Thapp\Jmg\Framework\Common\ProviderHelperTrait;
  * @version $Id$
  * @author iwyg <mail@thomas-appel.com>
  */
-class JmgServiceProvider implements ServiceProviderInterface, BootableProviderInterface
+class JitImageServiceProvider implements ServiceProviderInterface, BootableProviderInterface
 {
     use ProviderHelperTrait;
 

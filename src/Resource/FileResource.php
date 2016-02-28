@@ -143,7 +143,7 @@ class FileResource extends AbstractResource implements FileResourceInterface
     protected function findMimeType(array $meta, $mime = null)
     {
         if (null === $mime && $this->isLocal()) {
-            list($mime,) = explode(';', finfo_file($info = finfo_open(FILEINFO_MIME), $this->getPath()));
+            list($mime, ) = explode(';', finfo_file($info = finfo_open(FILEINFO_MIME), $this->getPath()));
 
             finfo_close($info);
         }

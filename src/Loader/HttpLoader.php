@@ -123,7 +123,6 @@ class HttpLoader extends AbstractLoader
             if ($status = $this->fetchFile($handle, $url)) {
                 return $handle;
             }
-
         }
 
         return false;
@@ -175,7 +174,6 @@ class HttpLoader extends AbstractLoader
         $trusted = $this->trustedHosts;
 
         if (!empty($trusted)) {
-
             $host = parse_url($url, PHP_URL_HOST);
             $host = substr($url, 0, strpos($url, $host)).$host;
 

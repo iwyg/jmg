@@ -50,7 +50,7 @@ class ProcessorTest extends AbstractProcessorTest
     /** @test */
     public function itShouldGetTargetSize()
     {
-        list ($proc, $image, $resource, ) = $this->prepareLoaded();
+        list($proc, $image, $resource, ) = $this->prepareLoaded();
 
         $image->expects($this->once())->method('getWidth')->willReturn(100);
         $image->expects($this->once())->method('getHeight')->willReturn(200);
@@ -64,14 +64,14 @@ class ProcessorTest extends AbstractProcessorTest
      */
     public function itShouldResizeImage($w, $h, $params, $tw, $th)
     {
-        list ($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
 
         $image->expects($this->any())->method('getSize')->willReturn(new Size($w, $h));
         $times = (0 !== $tw || 0 !== $th) ? 1 : 0;
 
         $edit->expects($this->exactly($times))->method('resize')->will($this->returnCallback(
             function () use ($tw, $th) {
-                list ($size, ) = func_get_args();
+                list($size, ) = func_get_args();
                 $this->assertSame($tw, $size->getWidth());
                 $this->assertSame($th, $size->getHeight());
             }
@@ -93,14 +93,14 @@ class ProcessorTest extends AbstractProcessorTest
      */
     public function itShouldScaleAndCropImage($w, $h, $params, $tw, $th)
     {
-        list ($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
 
         $image->expects($this->any())->method('getSize')->willReturn(new Size($w, $h));
         $times = (0 !== $tw || 0 !== $th) ? 1 : 0;
 
         $edit->expects($this->exactly(1))->method('crop');
 
-        list (, , , $gravity) = explode('/', $params);
+        list(, , , $gravity) = explode('/', $params);
 
         $image->expects($this->once())->method('setGravity')->will($this->returnCallBack(function ($g) use ($gravity) {
             $this->assertSame($g->getMode(), (int)$gravity);
@@ -123,12 +123,12 @@ class ProcessorTest extends AbstractProcessorTest
      */
     public function itShouldCropImage($w, $h, $params, $tw, $th)
     {
-        list ($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
 
         $image->expects($this->any())->method('getSize')->willReturn(new Size($w, $h));
         $times = (0 !== $tw || 0 !== $th) ? 1 : 0;
 
-        list (, , , $gravity, $color) = array_pad(explode('/', $params), 5, null);
+        list(, , , $gravity, $color) = array_pad(explode('/', $params), 5, null);
 
         if (null !== $color) {
             $image->expects($this->once())->method('getPalette')->willreturn(
@@ -147,7 +147,7 @@ class ProcessorTest extends AbstractProcessorTest
     /** @test */
     public function itShouldPassColorToCrop()
     {
-        list ($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
 
         $image->expects($this->any())->method('getSize')->willReturn(new Size(100, 100));
 
@@ -173,7 +173,7 @@ class ProcessorTest extends AbstractProcessorTest
      */
     public function itShouldResizeAndFit($w, $h, $params, $tw, $th)
     {
-        list ($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
 
         $image->expects($this->any())->method('getSize')->willReturn(new Size($w, $h));
         $edit->expects($this->exactly(1))->method('resize');
@@ -187,11 +187,11 @@ class ProcessorTest extends AbstractProcessorTest
      */
     public function itShouldPercentualScale($w, $h, $params, $tw, $th)
     {
-        list ($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
 
         $image->expects($this->any())->method('getSize')->willReturn(new Size($w, $h));
         $edit->expects($this->exactly(1))->method('resize')->will($this->returnCallback(function () use ($tw, $th) {
-            list ($size, ) = func_get_args();
+            list($size, ) = func_get_args();
             $this->assertSame($tw, $size->getWidth());
             $this->assertSame($th, $size->getHeight());
         }));
@@ -205,11 +205,11 @@ class ProcessorTest extends AbstractProcessorTest
      */
     public function itShouldPixelScale($w, $h, $params, $px)
     {
-        list ($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
 
         $image->expects($this->any())->method('getSize')->willReturn(new Size($w, $h));
         $edit->expects($this->exactly(1))->method('resize')->will($this->returnCallback(function () use ($w, $h, $px) {
-            list ($size, ) = func_get_args();
+            list($size, ) = func_get_args();
 
             $pixel = (new Size($w, $h))->pixel($px);
 
@@ -226,7 +226,7 @@ class ProcessorTest extends AbstractProcessorTest
      */
     public function itShouldResizeAndCropEachImageFrame($params, $method)
     {
-        list ($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
 
         $image->expects($this->any(1))->method('getSize')->willReturn(new Size(100, 100));
         $image->method('hasFrames')->willReturn(true);
@@ -243,7 +243,7 @@ class ProcessorTest extends AbstractProcessorTest
     /** @test */
     public function itShouldGetImageContents()
     {
-        list ($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
 
         $image->expects($this->once())->method('getBlob')->willReturn('content');
         $proc->getContents();
@@ -253,7 +253,7 @@ class ProcessorTest extends AbstractProcessorTest
     /** @test */
     public function itShouldGetSourcePath()
     {
-        list ($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
         $resource->expects($this->exactly(1))->method('getPath')->willReturn('image.jpg');
 
         $this->assertSame('image.jpg', $proc->getSource());
@@ -262,7 +262,7 @@ class ProcessorTest extends AbstractProcessorTest
     /** @test */
     public function itShouldGetResourceModTimeIfNotProcessed()
     {
-        list ($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
         $resource->expects($this->exactly(1))->method('getLastModified')->willReturn($time = time() - 1000);
 
         $this->assertSame($time, $proc->getLastModTime());
@@ -271,7 +271,7 @@ class ProcessorTest extends AbstractProcessorTest
     /** @test */
     public function itShouldBeProcessedOnModeZero()
     {
-        list ($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
 
         $proc->process(Parameters::fromString('0'));
 
@@ -281,7 +281,7 @@ class ProcessorTest extends AbstractProcessorTest
     /** @test */
     public function itShouldGetImageFormat()
     {
-        list ($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
 
         $image->expects($this->exactly(1))->method('getFormat')->willReturn('png');
         $resource->method('getMimeType')->willReturn('image/jpeg');

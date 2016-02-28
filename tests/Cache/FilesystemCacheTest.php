@@ -11,7 +11,6 @@
 
 namespace Thapp\Jmg\Tests\Cache;
 
-
 use org\bovigo\vfs\vfsStream;
 use Thapp\Jmg\Cache\CacheInterface;
 use Thapp\Jmg\Cache\FilesystemCache;
@@ -21,7 +20,7 @@ use Thapp\Jmg\Cache\FilesystemCache;
  * @package Thapp\Image\Tests\Cache
  * @version $Id$
  */
-class FileystemCacheTest extends \PHPUnit_Framework_TestCase
+class FilesystemCacheTest extends \PHPUnit_Framework_TestCase
 {
     protected $fs;
 

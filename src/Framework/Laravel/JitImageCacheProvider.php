@@ -20,7 +20,7 @@ use Thapp\Jmg\Resolver\CacheResolverInterface;
  * @version $Id$
  * @author iwyg <mail@thomas-appel.com>
  */
-abstract class JmgCacheProvider extends AppProvider
+abstract class JitImageCacheProvider extends AppProvider
 {
     /**
      * {@inheritdoc}

@@ -22,7 +22,7 @@ use Thapp\Jmg\Framework\Common\ProviderHelperTrait;
  * @version $Id$
  * @author iwyg <mail@thomas-appel.com>
  */
-class JmgServiceProvider extends ServiceProvider
+class JitImageServiceProvider extends ServiceProvider
 {
     use ProviderHelperTrait;
 
@@ -65,7 +65,6 @@ class JmgServiceProvider extends ServiceProvider
                 ->needs('Imagine\Image\ImagineInterface')
                 ->give($this->getImagineClass($this->app['config']->get('jmg.driver', 'imagick')));
         } elseif ('im' === $this->app['config']->get('jmg.driver')) {
-
             $this->app->singleton('Thapp\Image\Driver\Im\Identify', function () {
                 return new \Thapp\Image\Driver\Im\Identify(
                     new \Thapp\Image\Driver\Im\Shell\Command,
@@ -247,7 +246,7 @@ class JmgServiceProvider extends ServiceProvider
 
     protected function registerDynamicRoutes($router)
     {
-        list (, $params, $source, $filter) = $this->getPathRegexp();
+        list(, $params, $source, $filter) = $this->getPathRegexp();
 
         $pattern = '/{params}/{source}/{filter?}';
         $controller = $this->getControllerClass().'@getImageResponse';

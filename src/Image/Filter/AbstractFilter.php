@@ -31,5 +31,4 @@ abstract class AbstractFilter extends BaseFilter
     {
         return $proc->getDriver() instanceof ImageInterface;
     }
-
 }

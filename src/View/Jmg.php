@@ -121,7 +121,7 @@ class Jmg
 
         $this->setAsTag($asTag, $attributes);
 
-        list ($prefix, $params, $filter) = $res;
+        list($prefix, $params, $filter) = $res;
 
         return $this->apply($prefix, $source, $params, $filter ?: null, $recipe);
     }

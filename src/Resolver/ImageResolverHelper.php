@@ -37,7 +37,7 @@ trait ImageResolverHelper
      */
     private function extractParamString($params)
     {
-        list ($mode, $width, $height, $gravity, $background) = array_map(function ($value, $key = null) {
+        list($mode, $width, $height, $gravity, $background) = array_map(function ($value, $key = null) {
             return is_numeric($value) ? (int)$value : $value;
         }, array_pad(explode('/', $params), 5, null));
 
@@ -83,5 +83,4 @@ trait ImageResolverHelper
 
         return new FilterExpression;
     }
-
 }

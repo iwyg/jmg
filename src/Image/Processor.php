@@ -142,7 +142,7 @@ class Processor extends AbstractProcessor
     {
         $this->processed = true;
 
-        list ($w, $h) = $this->targetSize;
+        list($w, $h) = $this->targetSize;
 
         if (0 !== min($h, $w)) {
             $size = new Size($w, $h);
@@ -165,7 +165,7 @@ class Processor extends AbstractProcessor
     {
         $this->processed = true;
 
-        list ($w, $h) = $this->targetSize;
+        list($w, $h) = $this->targetSize;
         $size = new Size($w, $h);
 
         $this->image->setGravity($gravity = new Gravity($gravity));
@@ -192,7 +192,7 @@ class Processor extends AbstractProcessor
     {
         $this->processed = true;
 
-        list ($w, $h) = $this->targetSize;
+        list($w, $h) = $this->targetSize;
 
         $target = new Size($w, $h);
         $size = $this->image->getSize();
@@ -211,7 +211,7 @@ class Processor extends AbstractProcessor
     {
         $this->processed = true;
 
-        list ($w, $h) = $this->targetSize;
+        list($w, $h) = $this->targetSize;
 
         $size = $this->image->getSize();
         $this->doResize($size->fit(new Size($w, $h)));

@@ -34,4 +34,3 @@ class Modulate extends AbstractGdFilter
         return new GdModulate($bri, $sat, $hue);
     }
 }
-

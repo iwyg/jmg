@@ -276,7 +276,7 @@ class ImageResolver implements ImageResolverInterface
      */
     private function createResource(ProcessorInterface $processor)
     {
-        list ($w, $h) = $processor->getTargetSize();
+        list($w, $h) = $processor->getTargetSize();
 
         $resource = new ImageResource(null, $w, $h, $processor->getColorSpace());
 

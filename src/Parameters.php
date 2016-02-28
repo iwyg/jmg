@@ -204,7 +204,7 @@ class Parameters
             $parts[4] = null;
         }
 
-        list ($mode, $width, $height, $gravity, $background) = array_map(function ($value, $key = null) {
+        list($mode, $width, $height, $gravity, $background) = array_map(function ($value, $key = null) {
             return is_numeric($value) ? (int)$value : ltrim($value, ' #');
         }, $parts);
 

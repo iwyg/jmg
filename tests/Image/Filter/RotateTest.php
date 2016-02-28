@@ -32,5 +32,4 @@ class RotateTest extends FilterTest
         $palette->expects($this->once())->method('getColor')->with(hexdec('ffffff'))->willReturn($this->mockColor());
         $filter->apply($proc, ['d' => 180, 'c' => '#ffffff']);
     }
-
 }

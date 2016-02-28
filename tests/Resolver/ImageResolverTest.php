@@ -175,7 +175,6 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
             'Thapp\Jmg\Resource\ResourceInterface',
             $res->resolveCached('/images', 'prefix.filename.jpg')
         );
-
     }
 
     /** @test */

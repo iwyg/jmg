@@ -59,7 +59,7 @@ class RecipeResolver implements RecipeResolverInterface
                 continue;
             }
 
-            list ($path, $parameters, $filters) = $args;
+            list($path, $parameters, $filters) = $args;
 
             $this->add($recipe, $path, $parameters, $filters);
         }

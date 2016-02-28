@@ -14,6 +14,7 @@ namespace Thapp\Jmg\Tests\Image\Filter\Gmagick;
 use Thapp\Jmg\Tests\TestHelperTrait;
 use Thapp\Jmg\Image\Filter\Gmagick\Grayscale;
 use Thapp\Jmg\Tests\Image\Filter\GrayscaleFilterTest;
+
 /**
  * @class GrayscaleTest
  *

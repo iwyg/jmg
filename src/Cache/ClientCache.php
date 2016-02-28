@@ -66,7 +66,7 @@ class ClientCache extends AbstractCache
      */
     public function has($key)
     {
-        list ($prefix, $id) = $this->getKeyAndPrefix($key);
+        list($prefix, $id) = $this->getKeyAndPrefix($key);
 
         if (isset($this->pool[$prefix][$id]) && $this->client->has($this->getPrefixed($key))) {
             return true;
@@ -92,7 +92,7 @@ class ClientCache extends AbstractCache
             return;
         }
 
-        list ($prefix, $id) = $this->getKeyAndPrefix($key);
+        list($prefix, $id) = $this->getKeyAndPrefix($key);
 
         $resource = $this->pool[$prefix][$id];
 
@@ -110,7 +110,7 @@ class ClientCache extends AbstractCache
      */
     public function set($key, ProcessorInterface $proc)
     {
-        list ($prefix, $id) = $this->getKeyAndPrefix($key);
+        list($prefix, $id) = $this->getKeyAndPrefix($key);
 
         $this->pool[$prefix][$id] = $this->createResource($proc, $key, $id, $prefix);
     }
@@ -143,7 +143,7 @@ class ClientCache extends AbstractCache
      */
     public function delete($file, $prefix = null)
     {
-        list ($prefix, $id) = $this->getKeyAndPrefix($key = $this->createKey($file, $prefix));
+        list($prefix, $id) = $this->getKeyAndPrefix($key = $this->createKey($file, $prefix));
 
         if (!isset($this->pool[$prefix])) {
             return;

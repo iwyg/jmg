@@ -197,7 +197,7 @@ class CachedResource extends AbstractResource implements CachedResourceInterface
      */
     protected function setSize(ProcessorInterface $proc)
     {
-        list ($w, $h) = array_values($proc->getTargetSize());
+        list($w, $h) = array_values($proc->getTargetSize());
 
         $this->width  = $w;
         $this->height = $h;

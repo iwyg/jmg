@@ -59,7 +59,6 @@ class ClearCacheCommand extends Command
             } else {
                 $this->info('All Caches cleared');
             }
-
         } else {
             $this->error('Cache "'. $alias . '" could not be cleared.');
         }

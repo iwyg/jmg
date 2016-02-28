@@ -22,7 +22,7 @@ use Thapp\Jmg\View\Jmg;
  * @version $Id$
  * @author iwyg <mail@thomas-appel.com>
  */
-class JmgTwigHelperProvider implements ServiceProvider
+class JitImageTwigHelperProvider implements ServiceProvider
 {
     /**
      * {@inheritdoc}
