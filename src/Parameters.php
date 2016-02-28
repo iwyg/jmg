@@ -26,7 +26,7 @@ class Parameters
     const P_SEPARATOR = '/';
 
     /** @var array **/
-    const Q_MAP = [
+    private static $qMap = [
         'scale'      => ProcessorInterface::IM_RSIZEPERCENT,
         'pixel'      => ProcessorInterface::IM_RSIZEPXCOUNT,
         'scale-crop' => ProcessorInterface::IM_SCALECROP,
@@ -347,18 +347,13 @@ class Parameters
         }
 
 
-        $map = array_merge($map, static::Q_MAP);
+        $map = array_merge($map, static::$qMap);
         $type = array_reduce(array_keys($query), function ($a, $b) use ($map) {
             return isset($map[$b]) ? $b :
                 (isset($map[$a]) ? $a :  'mode');
         });
 
         $query['mode'] = $map[$type];
-
-        //if (is_numeric($query[$type])) {
-        //    $query['width'] = $type === 'scale' ? (float)$query[$type] : (int)$query[$type];
-        //}
-
 
         return $query;
     }
