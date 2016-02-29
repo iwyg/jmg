@@ -48,7 +48,9 @@ class UrlSigner implements HttpSignerInterface
     public function sign($path, Parameters $params, FilterExpression $filters = null)
     {
         $prefix = false !== mb_strpos($path, '?') ? '&' : '?';
-        return $path.$prefix.http_build_query([$this->qkey => $this->createSignature($path, $params, $filters)]);
+        $uri = parse_url($path, PHP_URL_PATH);
+
+        return $path.$prefix.http_build_query([$this->qkey => $this->createSignature($uri, $params, $filters)]);
     }
 
     /**
@@ -69,9 +71,9 @@ class UrlSigner implements HttpSignerInterface
             throw InvalidSignatureException::missingSignature();
         }
 
-        $path = preg_replace(sprintf('#(&?%s=[0-9a-z]+)#x', preg_quote($qkey, '#')), null, $uri);
-
-        if (0 !== strcmp($qparams[$qkey], $this->createSignature($path, $params, $filters))) {
+        // dont care about queries
+        //$path = preg_replace(sprintf('#(&?%s=[0-9a-z]+)#x', preg_quote($qkey, '#')), null, $uri);
+        if (0 !== strcmp($qparams[$qkey], $this->createSignature($parts['path'], $params, $filters))) {
             throw InvalidSignatureException::invalidSignature();
         }
 
