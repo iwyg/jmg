@@ -43,9 +43,12 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
     public function itShouldParseQueryParamsToInt()
     {
         $q = ['mode' => '2', 'width' => '220', 'height' => '220', 'gravity' => '5'];
-        $q = ['mode' => '1', 'width' => '220'];
 
-        $params = Parameters::fromQuery($q);
+        $params = Parameters::fromQuery($q)->all();
+        $this->assertSame(2, $params['mode']);
+        $this->assertSame(5, $params['gravity']);
+        $this->assertSame(220, $params['width']);
+        $this->assertSame(220, $params['height']);
     }
 
     /**
