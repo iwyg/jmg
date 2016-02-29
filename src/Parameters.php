@@ -280,13 +280,13 @@ class Parameters
             case 4:
                 $values['width'] = (int)$width;
                 $values['height'] = (int)$height;
-            break;
+                break;
             case 5:
                 $values['width'] = (float)$width;
-            break;
+                break;
             case 6:
                 $values['width'] = (int)$width;
-            break;
+                break;
         }
 
         return array_merge(static::defaults(), $values);

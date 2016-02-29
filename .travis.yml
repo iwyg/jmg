@@ -18,7 +18,7 @@ matrix:
 before_install:
   - if [[ $CODE_COVERAGE_LOG != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
   - composer self-update
-  - if [[ $CODE_COVERAGE_LOG == 'true' ]]; then composer require --no-update satooshi/php-coveralls:dev-master; fi
+  - if [[ $CODE_COVERAGE_LOG == 'true' ]]; then composer require --no-update satooshi/php-coveralls:1.0.*@dev; fi
   - if [[ $CS_CHECK_ENABLED == 'true' ]]; then composer require squizlabs/php_codesniffer; fi
 
 install:
