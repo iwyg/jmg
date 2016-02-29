@@ -9,7 +9,7 @@
  * that was distributed with this package.
  */
 
-namespace Thapp\Image\Resource;
+namespace Thapp\Jmg\Resource;
 
 /**
  * @abstract class AbstractResource

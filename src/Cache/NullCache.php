@@ -9,10 +9,10 @@
  * that was distributed with this package.
  */
 
-namespace Thapp\Image\Cache;
+namespace Thapp\Jmg\Cache;
 
-use \Thapp\Image\ProcessorInterface;
-use \Thapp\Image\Resource\NullResource;
+use Thapp\Jmg\ProcessorInterface;
+use Thapp\Jmg\Resource\NullResource;
 
 /**
  * @class FilesystemCache implements CacheInterface

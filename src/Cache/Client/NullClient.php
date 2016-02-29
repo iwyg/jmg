@@ -12,6 +12,8 @@
 
 namespace Thapp\Jmg\Cache\Client;
 
+use Thapp\Jmg\Cache\CacheInterface;
+
 /**
  * @class NullClient
  * @see ClientInterface
@@ -34,7 +36,7 @@ class NullClient implements ClientInterface
     /**
      * {@inheritdoc}
      */
-    public function set($id, $content)
+    public function set($key, $content, $expires = CacheInterface::EXPIRY_NONE)
     {
         $this->pool[$id] = $content;
     }
