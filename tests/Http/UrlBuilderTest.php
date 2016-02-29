@@ -12,6 +12,7 @@
 namespace Thapp\Jmg\Tests\Http;
 
 use Thapp\Jmg\Parameters;
+use Thapp\Jmg\FilterExpression;
 use Thapp\Jmg\Http\UrlBuilder;
 
 /**
@@ -52,6 +53,14 @@ class UrlBuilderTest extends \PHPUnit_Framework_TestCase
         $uri = $builder->getUri($src, Parameters::fromString($params), null, $prefix);
 
         $this->assertSame($expected, $uri);
+    }
+
+    /** @test */
+    public function itShouldBuildUrlWithQuery()
+    {
+        $builder = new UrlBuilder;
+        $filters = new FilterExpression(['circle' => ['o' => 12, 'c' => '#fff']]);
+        $uri = $builder->getUri('image.jpg', Parameters::fromString('1/100/0'), $filters, 'images', true);
     }
 
     public function getUriProvider()

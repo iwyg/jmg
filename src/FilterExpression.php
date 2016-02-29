@@ -12,6 +12,7 @@
 namespace Thapp\Jmg;
 
 use Thapp\Image\Color\Parser;
+use InvalidArgumentException;
 
 /**
  * @class FilterExpression
@@ -60,6 +61,14 @@ class FilterExpression
     }
 
     /**
+     * @return string
+     */
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
+    /**
      * Sets the filter expression
      *
      * @param mixed $expr array of parameters or string.
@@ -75,7 +84,7 @@ class FilterExpression
                 $expr = substr($expr, strlen($this->prefix.':'));
             }
         } elseif (!is_array($expr)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf('%s expects argument 1 to be a string or a array, %s given.', __METHOD__, gettype($expr))
             );
         }
@@ -149,6 +158,48 @@ class FilterExpression
     public function all()
     {
         return $this->toArray();
+    }
+
+    /**
+     * fromQuery
+     *
+     * @param array $query
+     * @param string $key
+     *
+     * @return self
+     */
+    public static function fromQuery(array $query, $key = 'filter')
+    {
+        if (!isset($query[$key])) {
+            return new self([], $key);
+        }
+
+        return new self(self::decodeParams($query[$key]), $key);
+    }
+
+    /**
+     * decodeParams
+     *
+     * @param array $params
+     *
+     * @return array
+     */
+    private static function decodeParams(array $params)
+    {
+        $out = [];
+        $params = array_filter($params);
+
+        foreach ($params as $key => $value) {
+            if (is_array($value)) {
+                $value = self::decodeParams($value);
+            } else {
+                $value = rawurldecode($value);
+            }
+
+            $out[rawurldecode($key)] = $value;
+        }
+
+        return $out;
     }
 
     /**

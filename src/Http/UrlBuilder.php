@@ -97,7 +97,8 @@ class UrlBuilder implements UrlBuilderInterface
         $prefix = trim($pfx, '/');
 
         if ($q) {
-            $queryString = http_build_query($params->all());
+            $qparams = array_merge($params->all(), $filters ? [$filters->getPrefix() => $filters->all()] : []);
+            $queryString = http_build_query($qparams, null, '&', PHP_QUERY_RFC3986);
             $path = sprintf('%s/%s?%s', $prefix, $src, $queryString);
         } else {
             $filterString = $this->getFiltersAsString($filters);
@@ -116,7 +117,7 @@ class UrlBuilder implements UrlBuilderInterface
     protected function getFiltersAsString(FilterExpression $filters = null)
     {
         if (null !== $filters && 0 < count($filters->all())) {
-            return sprintf('/filter:%s', (string)$filter);
+            return sprintf('/%s:%s', $filters->getPrefix(), (string)$filter);
         }
 
         return '';
