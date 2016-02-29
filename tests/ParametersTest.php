@@ -39,6 +39,15 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, (string)$params);
     }
 
+    /** @test */
+    public function itShouldParseQueryParamsToInt()
+    {
+        $q = ['mode' => '2', 'width' => '220', 'height' => '220', 'gravity' => '5'];
+        $q = ['mode' => '1', 'width' => '220'];
+
+        $params = Parameters::fromQuery($q);
+    }
+
     /**
      * @test
      * @dataProvider paramStringProvider
@@ -257,98 +266,98 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 [
-                    'mode' => 0,
-                    'height' => 200
+                    'mode' => '0',
+                    'height' => '200'
                 ],
                 '0'
             ],
             [
                 [
-                    'mode' => 1,
-                    'width' => 200,
-                    'height' => 400
+                    'mode' => '1',
+                    'width' => '200',
+                    'height' => '400'
                 ],
                 '1/200/400'
             ],
             [
                 [
-                    'mode' => 1,
-                    'width' => 200,
+                    'mode' => '1',
+                    'width' => '200',
                 ],
                 '1/200/0'
             ],
             [
                 [
-                    'mode' => 1,
-                    'height' => 200,
+                    'mode' => '1',
+                    'height' => '200',
                 ],
                 '1/0/200'
             ],
             [
                 [
-                    'mode' => 2,
-                    'height' => 200,
-                    'width' => 400
+                    'mode' => '2',
+                    'height' => '200',
+                    'width' => '400'
                 ],
                 '2/400/200/5'
             ],
             [
                 [
-                    'mode' => 2,
-                    'width' => 200,
-                    'height' => 400,
-                    'gravity' => 2
+                    'mode' => '2',
+                    'width' => '200',
+                    'height' => '400',
+                    'gravity' => '2'
                 ],
                 '2/200/400/2'
             ],
             [
                 [
-                    'mode' => 3,
-                    'width' => 200,
-                    'height' => 400,
-                    'gravity' => 2
+                    'mode' => '3',
+                    'width' => '200',
+                    'height' => '400',
+                    'gravity' => '2'
                 ],
                 '3/200/400/2'
             ],
             [
                 [
-                    'mode' => 3,
-                    'width' => 200,
-                    'height' => 400
+                    'mode' => '3',
+                    'width' => '200',
+                    'height' => '400'
                 ],
                 '3/200/400/5'
             ],
             [
                 [
-                    'mode' => 3,
-                    'width' => 200,
-                    'height' => 400,
+                    'mode' => '3',
+                    'width' => '200',
+                    'height' => '400',
                     'background' => $c = 'f7f7f7'
                 ],
                 '3/200/400/5/' . hexdec($c)
             ],
             [
                 [
-                    'mode' => 4,
-                    'width' => 200,
-                    'height' => 200,
+                    'mode' => '4',
+                    'width' => '200',
+                    'height' => '200',
                     'background' => 'f7f7f7'
                 ],
                 '4/200/200'
             ],
             [
                 [
-                    'mode' => 5,
-                    'width' => 200,
-                    'height' => 400,
+                    'mode' => '5',
+                    'width' => '200',
+                    'height' => '400',
                 ],
                 '5/200'
             ],
             [
                 [
-                    'mode' => 6,
-                    'width' => 200,
-                    'height' => 400,
+                    'mode' => '6',
+                    'width' => '200',
+                    'height' => '400',
                 ],
                 '6/200'
             ]

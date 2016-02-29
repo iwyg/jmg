@@ -260,47 +260,43 @@ class Parameters
      */
     private static function sanitize($mode = null, $width = null, $height = null, $gravity = null, $background = null)
     {
-        if (null === $mode) {
-            $mode = 0;
+        //$mode = max(0, min(6, (int)$mode));
+        $mode = max(0, min(6, (int)$mode));
+        $values = ['mode' => $mode];
+
+        if (2 == $mode || 3 === $mode) {
+            $values['gravity'] = $gravity ? (int)$gravity : 5;
         }
 
-        if (2 !== $mode && 3 !== $mode) {
-            $gravity = null;
-        } elseif (null === $gravity) {
-            $gravity = 5;
+        if (3 === $mode && null !== $background) {
+            $values['background'] = (is_int($background) && !Parser::isHex((string)$background)) ?
+                $background : hexdec(Parser::normalizeHex($background));
         }
 
-        if ($mode !== 3) {
-            $background = null;
-        } elseif (null !== $background) {
-            $background = (is_int($background) && !Parser::isHex((string)$background)) ?
-                $background :
-                hexdec(Parser::normalizeHex($background));
+        switch ($mode) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                $values['width'] = (int)$width;
+                $values['height'] = (int)$height;
+            break;
+            case 5:
+                $values['width'] = (float)$width;
+            break;
+            case 6:
+                $values['width'] = (int)$width;
+            break;
         }
 
-        if (4 < $mode || 0 === $mode) {
-            $height     = null;
-            $gravity    = null;
-        }
-
-        if (0 === $mode) {
-            $width = null;
-        }
-
-        if (5 === $mode) {
-            $width = (float)$width;
-        } elseif ($mode === 1) {
-            $width = null !== $width ? $width : 0;
-            $height = null !== $height ? $height : 0;
-        } else {
-            $width = null !== $width ? (int)$width : $width;
-            $height = null !== $height ? (int)$height : $height;
-        }
-
-
-        return compact('mode', 'width', 'height', 'gravity', 'background');
+        return array_merge(static::defaults(), $values);
     }
 
+    /**
+     * defaults
+     *
+     * @return array
+     */
     private static function defaults()
     {
         return ['mode' => null, 'width' => null, 'height' => null, 'gravity' => null, 'background' => null];
