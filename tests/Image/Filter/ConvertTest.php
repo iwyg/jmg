@@ -37,7 +37,7 @@ class ConvertTest extends FilterTest
     {
         $filter = new Convert;
         $proc = $this->mockProc();
-        $proc->expects($this->once())->method('getdriver')->willReturn($this->mockImage());
+        $proc->expects($this->once())->method('getDriver')->willReturn($this->mockImage());
         $filter->apply($proc, ['format' => 'jpeg']);
     }
 
@@ -46,7 +46,7 @@ class ConvertTest extends FilterTest
     {
         $filter = new Convert;
         $proc = $this->mockProc();
-        $proc->expects($this->once())->method('getdriver')->willReturn($this->mockImage());
+        $proc->expects($this->once())->method('getDriver')->willReturn($this->mockImage());
         $filter->supports($proc);
     }
 }
