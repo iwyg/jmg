@@ -22,17 +22,37 @@ use Thapp\Jmg\Resource\FileResourceInterface;
  */
 interface ProcessorInterface
 {
+    /** @var int */
     const IM_NOSCALE      = 0;
+
+    /** @var int */
     const IM_RESIZE       = 1;
+
+    /** @var int */
     const IM_SCALECROP    = 2;
+
+    /** @var int */
     const IM_CROP         = 3;
+
+    /** @var int */
     const IM_RSIZEFIT     = 4;
+
+    /** @var int */
     const IM_RSIZEPERCENT = 5;
+
+    /** @var int */
     const IM_RSIZEPXCOUNT = 6;
 
+    /** @var string */
     const FORMAT_JPG = 'jpg';
+
+    /** @var string */
     const FORMAT_PNG = 'png';
+
+    /** @var string */
     const FORMAT_GIF = 'gif';
+
+    /** @var string */
     const FORMAT_TIF = 'tif';
 
     /**

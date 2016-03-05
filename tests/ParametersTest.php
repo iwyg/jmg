@@ -62,6 +62,26 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $params->all());
     }
 
+    /** @test */
+    public function itShouldParseStringFromQueryChain()
+    {
+        $q = [
+            'jmg' => [
+                '1:500:0:filter:foo;o=2:bar;c=fff',
+                '2:200:200:5'
+            ]
+        ];
+
+        $params = Parameters::fromQueryChain($q);
+
+        $this->assertSame(2, count($params));
+        $this->assertInstanceOf('Thapp\Jmg\Parameters', $params[0][0]);
+        $this->assertInstanceOf('Thapp\Jmg\Parameters', $params[1][0]);
+        $this->assertInstanceOf('Thapp\Jmg\FilterExpression', $params[0][1]);
+        $this->assertInstanceOf('Thapp\Jmg\FilterExpression', $params[1][1]);
+    }
+
+
     public function paramStringProvider()
     {
         return [
@@ -82,32 +102,6 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
                 ['mode' => 3, 'width' => 300, 'height' => 300, 'gravity' => 5, 'background' => hexdec('ffee00')]
             ],
         ];
-    }
-
-    /** @test */
-    public function itShouldParseParamsFromString()
-    {
-        $params = new Parameters;
-
-        $params = $params->createFromString('0/100');
-
-        $this->assertSame([
-            'mode'       => 0,
-            'width'      => null,
-            'height'     => null,
-            'gravity'    => null,
-            'background' => null,
-        ], $params->all());
-
-        $params = $params->createFromString('2/200/400/3');
-
-        $this->assertSame([
-            'mode'       => 2,
-            'width'      => 200,
-            'height'     => 400,
-            'gravity'    => 3,
-            'background' => null,
-        ], $params->all());
     }
 
     /** @test */
