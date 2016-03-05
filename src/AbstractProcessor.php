@@ -11,6 +11,7 @@
 
 namespace Thapp\Jmg;
 
+use RuntimeException;
 use Thapp\Jmg\Exception\ProcessorException;
 
 /**
@@ -225,7 +226,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         }
 
         if (!$filters = $this->filters->resolve($filter)) {
-            throw new \RuntimeException('Filter "' . $filter . '" not found.');
+            throw new RuntimeException('Filter "' . $filter . '" not found.');
         }
 
         $filters = array_filter($filters, function ($f) {
@@ -233,7 +234,7 @@ abstract class AbstractProcessor implements ProcessorInterface
         });
 
         if (empty($filters)) {
-            throw new \RuntimeException('No suitable filter found.');
+            throw new RuntimeException('No suitable filter found.');
         }
 
         foreach ($filters as $filter) {

@@ -11,6 +11,7 @@
 
 namespace Thapp\Jmg\Tests\Resolver;
 
+use Thapp\Jmg\FilterExpression;
 use Thapp\Jmg\Resolver\ImageResolver;
 
 /**
@@ -39,7 +40,7 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
     public function itShouldNotResolveImageIfLoaderFailsToResolve()
     {
         $res = $this->getResolver();
-        $this->loaders->expects($this->once())->method('resolve')->with('media')->willreturn(null);
+        $this->loaders->expects($this->once())->method('resolve')->with('media')->willReturn(null);
         $this->proc->expects($this->exactly(0))->method('process');
 
         $this->assertFalse($res->resolve('image.jpg', $this->mockParams('0'), null, 'media'));
@@ -50,9 +51,9 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
     {
         $res = $this->getResolver();
         $this->loaders->expects($this->once())->method('resolve')
-            ->with('media')->willreturn($loader = $this->mockLoader());
+            ->with('media')->willReturn($loader = $this->mockLoader());
         $loader->expects($this->exactly(0))->method('supports');
-        $this->paths->expects($this->once())->method('resolve')->willreturn(null);
+        $this->paths->expects($this->once())->method('resolve')->willReturn(null);
         $this->proc->expects($this->exactly(0))->method('process');
 
         $this->assertFalse($res->resolve('image.jpg', $this->mockParams('0'), null, 'media'));
@@ -62,13 +63,31 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
     public function itShouldResolveImageWithoutCache()
     {
         $res = $this->getResolver();
-        $this->loaders->expects($this->once())->method('resolve')->willreturn($loader = $this->mockLoader());
-        $loader->expects($this->any())->method('supports')->with('path/image.jpg')->willreturn(true);
-        $this->paths->expects($this->once())->method('resolve')->willreturn('path');
+        $this->loaders->expects($this->once())->method('resolve')->willReturn($loader = $this->mockLoader());
+        $loader->expects($this->any())->method('supports')->with('path/image.jpg')->willReturn(true);
+        $this->paths->expects($this->once())->method('resolve')->willReturn('path');
 
         $this->proc->expects($this->once())->method('process');
 
         $res->resolve('image.jpg', $this->mockParams('0'), null, 'media');
+    }
+
+    /** @test */
+    public function itShouldResolveChainedParams()
+    {
+        $res = $this->getResolver();
+        $this->loaders->expects($this->once())->method('resolve')->willReturn($loader = $this->mockLoader());
+        $loader->expects($this->any())->method('supports')->with('path/image.jpg')->willReturn(true);
+
+        $this->paths->expects($this->once())->method('resolve')->willReturn('path');
+        $this->proc->expects($this->exactly(2))->method('process');
+
+        $params = [
+            [$a = $this->mockParams('1/200/0')],
+            [$b = $this->mockParams('2/100/100/5'), $this->mockFilter('color;q=1;c=fff')],
+        ];
+
+        $res->resolveChained('image.jpg', $params, 'path');
     }
 
     /** @test */
@@ -87,7 +106,7 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
     public function itShouldResolveImageIfConstraitsValidate()
     {
         $res = $this->newResolver(true, true);
-        $this->constraints->expects($this->once())->method('validate')->willreturn(null);
+        $this->constraints->expects($this->once())->method('validate')->willReturn(null);
         $this->caches->expects($this->once())->method('resolve')->willReturn($cache = $this->mockCache());
         $this->withCache($cache, false);
 
@@ -102,7 +121,7 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
         $res = $this->getResolver(true, true);
         $this->caches->expects($this->once())->method('resolve')->willReturn($cache = $this->mockCache());
         $this->withCache($cache, false);
-        $this->constraints->expects($this->once())->method('validate')->willreturn(false);
+        $this->constraints->expects($this->once())->method('validate')->willReturn(false);
 
         $this->proc->expects($this->exactly(0))->method('process');
 
@@ -190,9 +209,9 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
 
     protected function withCache($cache, $has = false)
     {
-        $this->loaders->expects($this->once())->method('resolve')->willreturn($loader = $this->mockLoader());
-        $loader->expects($this->any())->method('supports')->with('path/image.jpg')->willreturn(true);
-        $this->paths->expects($this->once())->method('resolve')->willreturn('path');
+        $this->loaders->expects($this->once())->method('resolve')->willReturn($loader = $this->mockLoader());
+        $loader->expects($this->any())->method('supports')->with('path/image.jpg')->willReturn(true);
+        $this->paths->expects($this->once())->method('resolve')->willReturn('path');
         $cache->expects($this->once())->method('has')->willReturn($has);
 
         if ($has) {
@@ -275,6 +294,18 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
         $param->method('__toString')->willReturn($str);
 
         return $param;
+    }
+
+    protected function mockFilter($str = '')
+    {
+        $filter = $this->getMockBuilder('Thapp\Jmg\FilterExpression')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $filter->method('__toString')->willReturn($str);
+
+        $filter->method('all')->willreturn((new FilterExpression($str))->all());
+
+        return $filter;
     }
 
     protected function mockConstraints($constraints = false)

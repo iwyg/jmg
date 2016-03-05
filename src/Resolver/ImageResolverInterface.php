@@ -34,6 +34,17 @@ interface ImageResolverInterface
     public function resolve($src, Parameters $params, FilterExpression $filters = null, $prefix = '');
 
     /**
+     * resolveChained
+     *
+     * @param mixed $src
+     * @param array $params
+     * @param string $prefix
+     *
+     * @return Thapp\Jmg\Resource\ImageResourceInterface
+     */
+    public function resolveChained($src, array $params, $prefix = '');
+
+    /**
      * Resolves a cached image by path and prefix.
      *
      * @param array $parameters
