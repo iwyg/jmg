@@ -27,7 +27,7 @@ class RotateTest extends FilterTest
     {
         $filter = new Rotate;
         $proc = $this->mockProc();
-        $proc->expects($this->once())->method('getdriver')->willReturn($image = $this->mockImage());
+        $proc->expects($this->once())->method('getDriver')->willReturn($image = $this->mockImage());
         $image->expects($this->once())->method('getPalette')->willReturn($palette = $this->mockPalette());
         $palette->expects($this->once())->method('getColor')->with(hexdec('ffffff'))->willReturn($this->mockColor());
         $filter->apply($proc, ['d' => 180, 'c' => '#ffffff']);
