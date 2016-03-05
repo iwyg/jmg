@@ -11,17 +11,16 @@
 
 namespace Thapp\Jmg\Resolver;
 
-use Thapp\Jmg\Parameters as Params;
-use Thapp\Jmg\FilterExpression as Filters;
 use Thapp\Jmg\ProcessorInterface;
+use Thapp\Jmg\Parameters as Params;
 use Thapp\Jmg\Resource\ImageResource;
-use Thapp\Jmg\Cache\CacheInterface as Cache;
-use Thapp\Jmg\Validator\ValidatorInterface;
 use Thapp\Jmg\Loader\LoaderInterface;
+use Thapp\Jmg\FilterExpression as Filters;
+use Thapp\Jmg\Validator\ValidatorInterface;
+use Thapp\Jmg\Cache\CacheInterface as Cache;
 
 /**
- * @class ImageResolver implements ResolverInterface
- * @see ResolverInterface
+ * @class ImageResolver
  *
  * @package Thapp\Jmg
  * @version $Id$
@@ -31,48 +30,22 @@ class ImageResolver implements ImageResolverInterface
 {
     use ImageResolverHelper;
 
-    /**
-     * processor
-     *
-     * @var ProcessorInterface
-     */
+    /** @var ProcessorInterface */
     private $processor;
 
-    /**
-     * cacheResolver
-     *
-     * @var ResolverInterface
-     */
+    /** @var ResolverInterface */
     private $cacheResolver;
 
-    /**
-     * pathResolver
-     *
-     * @var mixed
-     */
+    /** @var PathResolverInterface */
     private $pathResolver;
 
-    /**
-     * loaderResolver
-     *
-     * @var mixed
-     */
+    /** @var LoaderResolverInterface */
     private $loaderResolver;
 
-    /**
-     * constraintValidator
-     *
-     * @var ValidatorInterface
-     */
+    /** @var ValidatorInterface */
     private $constraintValidator;
 
-    /**
-     * urlSigner
-     *
-     * @var mixed
-     */
-    private $urlSigner;
-
+    /** @var array */
     private $pool;
 
     /**
@@ -194,8 +167,8 @@ class ImageResolver implements ImageResolverInterface
             return false;
         }
 
-        $key = null;
-        $cache = $this->cacheResolver ? $this->cacheResolver->resolve($alias) : null;
+        $key       = null;
+        $cache     = $this->cacheResolver ? $this->cacheResolver->resolve($alias) : null;
         $filterStr = $filters ? (string)$filters : null;
 
         if (null !== $cache && $cache->has($key = $this->cacheKey($cache, $alias, $src, (string)$params, $filterStr)) &&
@@ -214,7 +187,7 @@ class ImageResolver implements ImageResolverInterface
             return false;
         }
 
-        return $this->applyProcessor($file, $params, $filters, $cache, $key);
+        return $this->runProc($file, $params, $filters, $cache, $key);
     }
 
     /**
@@ -313,7 +286,7 @@ class ImageResolver implements ImageResolverInterface
     }
 
     /**
-     * applyProcessor
+     * Run the image processor.
      *
      * @param string $source
      * @param Params $params
@@ -321,9 +294,9 @@ class ImageResolver implements ImageResolverInterface
      * @param Cache $cache
      * @param string $key
      *
-     * @return Thapp\Jmg\Resource\ResourceInterface
+     * @return Thapp\Jmg\Resource\ImageResourceInterface
      */
-    private function applyProcessor($source, Params $params, Filters $filters = null, Cache $cache = null, $key = null)
+    private function runProc($source, Params $params, Filters $filters = null, Cache $cache = null, $key = null)
     {
         $this->processor->process($params, $filters);
 

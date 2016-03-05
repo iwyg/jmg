@@ -24,21 +24,21 @@ use Thapp\Jmg\FilterExpression;
 interface ImageResolverInterface
 {
     /**
-     * resolve
+     * Resolves an image resource by parameters.
      *
      * @param Parameters $parameters
      * @param FilterExpression $filters
      *
-     * @return void
+     * @return Thapp\Jmg\Resource\ImageResourceInterface
      */
     public function resolve($src, Parameters $params, FilterExpression $filters = null, $prefix = '');
 
     /**
-     * resolverCache
+     * Resolves a cached image by path and prefix.
      *
      * @param array $parameters
      *
-     * @return void
+     * @return Thapp\Jmg\Resource\ImageResourceInterface
      */
     public function resolveCached($prefix, $key);
 
