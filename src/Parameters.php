@@ -269,7 +269,7 @@ class Parameters
      *
      * @return array
      */
-    public static function fromQueryChain(array $query, $filter = 'filter')
+    public static function fromChainedQuery(array $query, $filter = 'filter')
     {
         if (!isset($query['jmg'])) {
             return [];
