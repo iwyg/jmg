@@ -72,7 +72,7 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        $params = Parameters::fromQueryChain($q);
+        $params = Parameters::fromChainedQuery($q);
 
         $this->assertSame(2, count($params));
         $this->assertInstanceOf('Thapp\Jmg\Parameters', $params[0][0]);
@@ -80,7 +80,6 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Thapp\Jmg\FilterExpression', $params[0][1]);
         $this->assertInstanceOf('Thapp\Jmg\FilterExpression', $params[1][1]);
     }
-
 
     public function paramStringProvider()
     {
