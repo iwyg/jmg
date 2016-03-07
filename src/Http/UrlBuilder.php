@@ -28,18 +28,14 @@ class UrlBuilder implements UrlBuilderInterface
     /** @var HttpSignerInterface */
     private $signer;
 
-    /** @var RecipeResolverInterface */
-    private $recipes;
-
     /**
      * Constructor.
      *
      * @param HttpSignerInterface $signer
      */
-    public function __construct(HttpSignerInterface $signer = null, RecipeResolverInterface $recipes = null)
+    public function __construct(HttpSignerInterface $signer = null)
     {
         $this->signer = $signer;
-        $this->recipes = $recipes;
     }
 
     /**
@@ -69,22 +65,7 @@ class UrlBuilder implements UrlBuilderInterface
      */
     public function fromRecipe($recipe, $src, $separator = ':')
     {
-        if (null === $this->recipes) {
-            throw new \LogicException('Can\'t build uri for recipes without resolver.');
-        }
-
-        if (!$recipes = $this->recipes->resolve($recipe)) {
-            throw new \InvalidArgumentException(sprintf('Can\'t build uri for recipe "%s".', $recipe));
-        }
-
-        list ($alias, $params) = $recipes;
-        $path = sprintf('%s%s%s', $recipe, $separator, trim($src, '/'));
-
-        if (null !== $this->signer) {
-            return $this->signer->sign($path, $params);
-        }
-
-        return $path;
+        return sprintf('%s%s%s', $recipe, $separator, trim($src, '/'));
     }
 
     /**

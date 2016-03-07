@@ -11,6 +11,7 @@
 
 namespace Thapp\Jmg\Filter;
 
+use InvalidArgumentException;
 use Thapp\Jmg\ProcessorInterface;
 
 /**
@@ -23,23 +24,22 @@ use Thapp\Jmg\ProcessorInterface;
 class Convert extends AbstractFilter
 {
     /**
-     * apply
-     *
-     * @param ProcessorInterface $proc
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function apply(ProcessorInterface $proc, array $options = [])
     {
         $this->setOptions($options);
 
         if (null == $format = $this->getOption('f')) {
-            throw new \InvalidArgumentException;
+            throw new InvalidArgumentException('Missing required option f.');
         }
 
         $proc->setFileFormat($format);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function getShortOpts()
     {
         return ['f' => 'format'];

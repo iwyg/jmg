@@ -23,7 +23,7 @@ use Thapp\Jmg\ProcessorInterface;
 interface FilterInterface
 {
     /**
-     * apply
+     * Apply the filter.
      *
      * @param ProcessorInterface $proc
      *
@@ -32,11 +32,11 @@ interface FilterInterface
     public function apply(ProcessorInterface $proc, array $options = []);
 
     /**
-     * supports
+     * Check if the filter is supported.
      *
      * @param ProcessorInterface $proc
      *
-     * @return boolean
+     * @return bool
      */
     public function supports(ProcessorInterface $proc);
 }

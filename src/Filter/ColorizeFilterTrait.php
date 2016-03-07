@@ -28,6 +28,9 @@ trait ColorizeFilterTrait
         return str_pad(dechex($value), 6, '0', STR_PAD_LEFT);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function getShortOpts()
     {
         return ['c' => 'color'];

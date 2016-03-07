@@ -35,11 +35,17 @@ class Flip extends AbstractFilter
         $image->filter(new FlipFilter($this->getOption('m', FlipFilter::FLIP_BOTH)));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function parseOption($option, $value)
     {
         return min(2, max(0, (int)$value));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function getShortOpts()
     {
         return ['m' => 'mode'];

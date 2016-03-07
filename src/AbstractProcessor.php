@@ -303,7 +303,7 @@ abstract class AbstractProcessor implements ProcessorInterface
     /**
      * formatToExtension
      *
-     * @param mixed $format
+     * @param string $format
      *
      * @return string
      */

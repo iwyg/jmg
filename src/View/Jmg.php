@@ -11,17 +11,13 @@
 
 namespace Thapp\Jmg\View;
 
-use Thapp\Jmg\Parameters;
-use Thapp\Jmg\FilterExpression;
-use Thapp\Jmg\Cache\CacheInterface;
-use Thapp\Jmg\Http\UrlResolverInterace;
-use Thapp\Jmg\Resolver\ImageResolverHelper;
+use InvalidArgumentException;
+use Thapp\Jmg\ParamGroup;
+use Thapp\Jmg\Http\UrlBuilder;
+use Thapp\Jmg\Resource\CachedResourceInterface;
+use Thapp\Jmg\Http\UrlBuilderInterface as Url;
 use Thapp\Jmg\Resolver\ImageResolverInterface as ImageResolver;
 use Thapp\Jmg\Resolver\RecipeResolverInterface as Recipes;
-use Thapp\Jmg\Http\UrlBuilder;
-use Thapp\Jmg\Http\UrlBuilderInterface as Url;
-use Thapp\Jmg\Resource\ResourceInterface;
-use Thapp\Jmg\Resource\CachedResourceInterface;
 
 /**
  * @class Jmg
@@ -30,20 +26,25 @@ use Thapp\Jmg\Resource\CachedResourceInterface;
  * @version $Id$
  * @author iwyg <mail@thomas-appel.com>
  */
-class Jmg
+class Jmg implements Applyable
 {
-    use ImageResolverHelper;
-
-    private $pool;
-    private $recipes;
+    /** @var Generator */
     private $generator;
+
+    /** @var ImageResolverInterface */
+    private $images;
+
+    /** @var array */
+    private $options;
+
+    /** @var bool */
+    private $chain;
+
+    /** @var Recipes */
+    private $recipes;
+
+    /** @var Url */
     private $url;
-    private $imageResolver;
-    private $defaultPath;
-    private $cachePrefix;
-    private $current;
-    private $asTag;
-    private $attributes;
 
     /**
      * Constructor.
@@ -52,16 +53,13 @@ class Jmg
      * @param RecipeResolverInterface $recipes
      * @param UrlBuilderInterface $url
      */
-    public function __construct(ImageResolver $imageResolver, Recipes $recipes, Url $url = null, $cPrefix = 'cached')
+    public function __construct(ImageResolver $resolver, Recipes $recipes, Url $url = null, array $options = [])
     {
-        $this->imageResolver = $imageResolver;
+        $this->images  = $resolver;
         $this->recipes = $recipes;
-        $this->url = $url ?: new UrlBuilder;
-        $this->pool = [];
-        $this->asTag = false;
+        $this->url     = $url ?: new UrlBuilder;
 
-        $this->start = microtime(true);
-        $this->cachePrefix = $cPrefix;
+        $this->setOptions($options);
     }
 
     /**
@@ -71,7 +69,7 @@ class Jmg
      */
     public function getImageResolver()
     {
-        return $this->imageResolver;
+        return $this->images;
     }
 
     /**
@@ -92,18 +90,13 @@ class Jmg
      *
      * @return Generator
      */
-    public function take($source, $path = null, $asTag = false, array $attributes = [])
+    public function with($source, $path = null, $asTag = false, array $attributes = null, $query = true)
     {
-        $this->current = null;
-        $this->setAsTag($asTag, $attributes);
+        $path = $path ?: $this->getOption('default_prefix');
+        $task = new Task($this->chain, $path, $source, $asTag, $attributes, (bool)$query);
+        $this->chain = false;
 
-        $path = $path ?: $this->defaultPath;
-        $gen = $this->newGenerator();
-
-        $gen->setPath($path);
-        $gen->setSource($source);
-
-        return $gen;
+        return $this->newGenerator($task);
     }
 
     /**
@@ -115,15 +108,16 @@ class Jmg
      */
     public function make($recipe, $source, $asTag = false, array $attributes = [])
     {
-        if (!$res = $this->recipes->resolve($recipe)) {
-            return '';
+        if (!$recipes = $this->recipes->resolve($recipe)) {
+            throw new InvalidArgumentException();
         }
 
-        $this->setAsTag($asTag, $attributes);
+        list ($alias, $params) = $recipes;
 
-        list($prefix, $params, $filter) = $res;
+        $task = new Task(false, $source, $asTag, $attributes, false);
+        $taks->setParams($params);
 
-        return $this->apply($prefix, $source, $params, $filter ?: null, $recipe);
+        return $this->flushTask($task, $recipe);
     }
 
     /**
@@ -131,67 +125,55 @@ class Jmg
      *
      * @return string
      */
-    public function apply($name, $source, Parameters $params, FilterExpression $filters = null, $recipe = null)
+    public function apply(Task $task)
     {
-        if (!$resource = $this->imageResolver->resolve($source, $params, $filters, $name)) {
+        if ($task->isChained()) {
+            return $this->newGenerator($task);
+        }
+
+        return $this->flushTask($task);
+    }
+
+    /**
+     * Starts a chained process.
+     *
+     * @return self
+     */
+    public function chain()
+    {
+        $this->chain = true;
+
+        return $this;
+    }
+
+    /**
+     * flushTask
+     *
+     * @param ParamGroup $params
+     * @param string $recipe
+     *
+     * @return string
+     */
+    private function flushTask(Task $task, $recipe = null)
+    {
+        $params = $task->getParams();
+
+        if (!$resource = $this->images->resolve($task->getSource(), $params, $task->getPrefix())) {
+            $this->clear();
             return '';
         }
 
-        $this->current = $resource;
-
         if ($resource instanceof CachedResourceInterface) {
-            return $this->getCachedPath($resource, $name);
+            $url = $this->url->fromCached($resource, $this->getOption('cache_prefix'));
+        } elseif ($this->query) {
+            $uri = $this->url->asQuery($task->getPrefix(), $task->getSource(), $params);
+        } else {
+            $uri = $this->url->fromQuery($task->getPrefix(), $task->getSource(), $params);
         }
 
-        if (null !== $recipe) {
-            return $this->getRecipeUri($source, $name, $recipe, $params, $filters);
-        }
+        $this->clear();
 
-        return $this->getUri($source, $name, $params, $filters);
-    }
-
-    /**
-     * getUri
-     *
-     * @param mixed $source
-     * @param mixed $name
-     * @param Parameters $params
-     * @param FilterExpression $filters
-     *
-     * @return string
-     */
-    private function getUri($source, $name, Parameters $params, FilterExpression $filters = null)
-    {
-        return $this->getOutput($this->url->getUri($source, $params, $filters, $name));
-    }
-
-    /**
-     * getRecipeUri
-     *
-     * @param mixed $source
-     * @param mixed $name
-     * @param mixed $recipe
-     * @param Parameters $params
-     * @param FilterExpression $filters
-     *
-     * @return string
-     */
-    private function getRecipeUri($source, $name, $recipe, Parameters $params, FilterExpression $filters = null)
-    {
-        return $this->getOutput($this->url->getRecipeUri($source, $recipe, $params, $filters));
-    }
-
-    /**
-     * getCachedPath
-     *
-     * @param CachedResourceInterface $cached
-     * @param mixed $name
-     *
-     * @return string
-     */
-    private function getCachedPath(CachedResourceInterface $cached, $name)
-    {
-        return $this->getOutput($this->url->getCachedUri($cached, $name, $this->cachePrefix));
+        return $this->getOutput($task, $uri, $resource);
     }
 
     /**
@@ -199,29 +181,9 @@ class Jmg
      *
      * @return void
      */
-    protected function close()
+    private function clear()
     {
-        $this->imageResolver->getProcessor()->close();
-    }
-
-    /**
-     * setAsTag
-     *
-     * @param boolean $asTag
-     * @param array $attributes
-     *
-     * @return void
-     */
-    protected function setAsTag($asTag, array $attributes)
-    {
-        if (!(boolean)$asTag) {
-            $this->clearTag();
-
-            return;
-        }
-
-        $this->asTag = true;
-        $this->attributes = $attributes;
+        $this->images->getProcessor()->close();
     }
 
     /**
@@ -231,10 +193,10 @@ class Jmg
      *
      * @return string
      */
-    private function getOutput($path)
+    private function getOutput(Task $task, $path, ImageResourceInterface $resource)
     {
-        if ($this->asTag) {
-            return $this->createTag($path, array_merge($this->attributes, $this->getResourceDimension()));
+        if ($task->isTag()) {
+            return $this->createTag($path, array_merge($task->getAttributes(), $this->getResourceDimension($resource)));
         }
 
         return $path;
@@ -245,20 +207,9 @@ class Jmg
      *
      * @return arra
      */
-    private function getResourceDimension()
+    private function getResourceDimension(ImageResourceInterface $resource)
     {
-        return ['width' => $this->current->getWidth(), 'height' => $this->current->getHeight()];
-    }
-
-    /**
-     * clearTag
-     *
-     * @return void
-     */
-    private function clearTag()
-    {
-        $this->asTag = false;
-        $this->attributes = null;
+        return ['width' => $resource->getWidth(), 'height' => $resource->getHeight()];
     }
 
     /**
@@ -284,11 +235,34 @@ class Jmg
      *
      * @return Generator
      */
-    private function newGenerator()
+    private function newGenerator(Task $task)
     {
         if (null === $this->generator) {
-            return $this->generator = new Generator($this);
+            return $this->generator = new Generator($this, $task);
         }
-        return clone $this->generator;
+
+        $gen = clone $this->generator;
+        $gen->setTask($task);
+
+        return $gen;
+    }
+
+    private function setOptions(array $options)
+    {
+        $this->options = array_merge(self::defaults(), $options);
+    }
+
+    private function getOption($option, $default = null)
+    {
+        return isset($this->options[$option]) ? $this->options[$option] : $default;
+    }
+
+    private static function defaults()
+    {
+        return [
+            'default_prefix'       => 'images',
+            'cache_prefix'         => 'cached',
+            'url_source_separator' => ':',
+        ];
     }
 }

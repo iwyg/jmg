@@ -26,69 +26,35 @@ use Thapp\Image\Geometry\GravityInterface;
  */
 class Generator
 {
-    protected $jmg;
-    protected $path;
-    protected $source;
-    protected $filters;
-    protected $parameters;
+    private $jmg;
+    private $path;
+    private $source;
+    private $filters;
+    private $parameters;
+    private $task;
 
-    public function __construct(Jmg $jmg)
+    public function __construct(Applyable $jmg, Task $task = null)
     {
         $this->jmg = $jmg;
         $this->filters = new FilterExpression([]);
         $this->parameters = new Parameters;
+        $this->task = $task;
     }
 
     public function __clone()
     {
-        $this->path = null;
-        $this->source = null;
         $this->filters = clone $this->filters;
         $this->parameters = clone $this->parameters;
     }
 
-    /**
-     * getPath
-     *
-     * @return void
-     */
-    public function getPath()
+    public function getTask()
     {
-        return $this->path;
+        return $this->task;
     }
 
-    /**
-     * getSource
-     *
-     * @return void
-     */
-    public function getSource()
+    public function setTask(Task $task)
     {
-        return $this->source;
-    }
-
-    /**
-     * setPath
-     *
-     * @param mixed $path
-     *
-     * @return void
-     */
-    public function setPath($path)
-    {
-        $this->path = $path;
-    }
-
-    /**
-     * setSource
-     *
-     * @param mixed $source
-     *
-     * @return void
-     */
-    public function setSource($source)
-    {
-        $this->source = $source;
+        $this->task = $task;
     }
 
     /**
@@ -218,12 +184,44 @@ class Generator
     }
 
     /**
+     * end
+     *
+     * @return void
+     */
+    public function end()
+    {
+        if (null === $this->task || !$this->task->isChained()) {
+            throw new \LogicException;
+        }
+
+        $params = $this->task->getParams();
+        $newTask = $this->task->withArguments(
+            false,
+            $this->task->getPrefix(),
+            $this->task->getSource(),
+            $this->task->isTag(),
+            $this->task->getAttributes(),
+            $this->task->isQuery()
+        );
+
+        $newTask->setParams($params);
+
+        $this->task = $newTask;
+
+        return $this->apply(true);
+    }
+
+    /**
      * apply
      *
      * @return string
      */
-    protected function apply()
+    private function apply($finish = false)
     {
-        return $this->jmg->apply($this->path, $this->source, $this->parameters, $this->filters);
+        if (!$finish) {
+            $this->task->add($this->parameters, $this->filters);
+        }
+
+        return $this->jmg->apply($this->task);
     }
 }

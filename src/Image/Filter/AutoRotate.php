@@ -11,8 +11,8 @@
 
 namespace Thapp\Jmg\Image\Filter;
 
-use Thapp\Jmg\ProcessorInterface;
 use Thapp\Image\Color\Hex;
+use Thapp\Jmg\ProcessorInterface;
 use Thapp\Image\Filter\AutoRotate as ImageAutoRotate;
 
 /**

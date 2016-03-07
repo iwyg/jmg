@@ -26,53 +26,25 @@ class FilesystemCache extends AbstractCache
 {
     use FileHelper;
 
-    /**
-     * path
-     *
-     * @var string
-     */
+    /** @var string */
     protected $path;
 
-    /**
-     * path
-     *
-     * @var string
-     */
+    /** @var string */
     protected $metaPath;
 
-    /**
-     * pool
-     *
-     * @var array
-     */
+    /** @var array */
     protected $pool;
 
-    /**
-     * resources
-     *
-     * @var array
-     */
+    /** @var array */
     protected $resources;
 
-    /**
-     * prefix
-     *
-     * @var string
-     */
+    /** @var string */
     protected $prefix;
 
-    /**
-     * metaKey
-     *
-     * @var string
-     */
+    /** @var string */
     protected $metaKey;
 
-    /**
-     * time
-     *
-     * @var int
-     */
+    /** @var int */
     protected $time;
 
     /**
@@ -92,13 +64,13 @@ class FilesystemCache extends AbstractCache
         $metaKey = 'meta'
     ) {
         $this->setExpires($expires);
-        $this->path   = $location ?: getcwd();
-        $this->metaPath = $metaPath ?: $this->path;
+        $this->path      = $location ?: getcwd();
+        $this->metaPath  = $metaPath ?: $this->path;
 
-        $this->prefix = $prefix;
-        $this->metaKey  = $metaKey;
+        $this->prefix    = $prefix;
+        $this->metaKey   = $metaKey;
 
-        $this->pool = [];
+        $this->pool      = [];
         $this->resources = [];
     }
 

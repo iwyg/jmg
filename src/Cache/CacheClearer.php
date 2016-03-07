@@ -23,6 +23,7 @@ use Thapp\Jmg\Resolver\CacheResolverInterface;
  */
 class CacheClearer
 {
+    /** @var CacheResolverInterface */
     private $cacheResolver;
 
     /**
@@ -36,11 +37,11 @@ class CacheClearer
     }
 
     /**
-     * Clears cache for a given path
+     * Clears cache for a given path.
      *
      * @param string $name
      *
-     * @return boolean
+     * @return bool
      */
     public function clear($name = null)
     {
@@ -59,6 +60,14 @@ class CacheClearer
         return false;
     }
 
+    /**
+     * Clears cache for a given image.
+     *
+     * @param string $image
+     * @param string $prefix
+     *
+     * @return bool
+     */
     public function clearImage($image, $prefix = null)
     {
         if (!$this->cacheResolver->has($prefix) || !$cache = $this->cacheResolver->resolve($prefix)) {
@@ -68,6 +77,11 @@ class CacheClearer
         return $cache->delete($image, $prefix);
     }
 
+    /**
+     * clearAll
+     *
+     * @return boll
+     */
     private function clearAll()
     {
         $cleared = [];

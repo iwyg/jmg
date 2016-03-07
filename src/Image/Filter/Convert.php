@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This File is part of the Thapp\Jmg\Image\Filter package
+ * This File is part of the Thapp\Jmg package
  *
  * (c) iwyg <mail@thomas-appel.com>
  *
@@ -19,7 +19,7 @@ use Thapp\Image\Filter\Format as ImageFormat;
 /**
  * @class Rotate
  *
- * @package Thapp\Jmg\Image\Filter
+ * @package Thapp\Jmg
  * @version $Id$
  * @author iwyg <mail@thomas-appel.com>
  */

@@ -34,6 +34,9 @@ class Palette extends AbstractFilter
         $image->filter(new PaletteFilter($this->getOption('p', PaletteFilter::PALETTE_RGB)));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function parseOption($option, $value)
     {
         switch ($value) {

@@ -11,6 +11,7 @@
 
 namespace Thapp\Jmg\Filter;
 
+use InvalidArgumentException;
 use Thapp\Jmg\ProcessorInterface;
 
 /**
@@ -22,6 +23,7 @@ use Thapp\Jmg\ProcessorInterface;
  */
 abstract class AbstractFilter implements FilterInterface
 {
+    /** @var array */
     protected $options = [];
 
     /**
@@ -44,7 +46,7 @@ abstract class AbstractFilter implements FilterInterface
         $this->options = [];
         foreach ($options as $option => $value) {
             if (null === ($option = $this->translateOption($option))) {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     sprintf('filter %s has no option "%s"', get_class($this), $option)
                 );
             }
@@ -106,6 +108,11 @@ abstract class AbstractFilter implements FilterInterface
         }
     }
 
+    /**
+     * Get short options array.
+     *
+     * @return array
+     */
     protected function getShortOpts()
     {
         return [];

@@ -24,11 +24,22 @@ use Thapp\Jmg\Cache\Client\ClientInterface;
  */
 class ClientCache extends AbstractCache
 {
+    /** @var string */
     protected $id;
+
+    /** @var array */
     protected $changes;
+
+    /** @var ClientInterface */
     protected $client;
+
+    /** @var array */
     protected $resources;
+
+    /** @var array */
     protected $pool;
+
+    /** @var array */
     protected $resolved;
 
     /**

@@ -68,39 +68,12 @@ class UrlBuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function itShouldThrowOnBuildingRecipesUriIfNoResolverIsSet()
-    {
-        $builder = new UrlBuilder();
-        try {
-            $builder->fromRecipe('foo', 'image.jpg');
-        } catch (\LogicException $e) {
-            $this->assertEquals('Can\'t build uri for recipes without resolver.', $e->getMessage());
-        }
-    }
-
-    /** @test */
-    public function itShouldThrowOnBuildingRecipesUriIfNoRecipeCanBeResolved()
-    {
-        $builder = new UrlBuilder(null, $rec = $this->mockRecipes());
-        $rec->method('resolve')->willReturn(null);
-        try {
-            $builder->fromRecipe('foo', 'image.jpg');
-        } catch (\InvalidArgumentException $e) {
-            $this->assertEquals('Can\'t build uri for recipe "foo".', $e->getMessage());
-        }
-    }
-
-    /** @test */
     public function itShouldResolveRecipes()
     {
         $signer = $this->mockSigner();
-        $signer->expects($this->exactly(2))->method('sign')->willReturnCallback(function ($path) {
-            return $path;
-        });
-        $rec = $this->mockRecipes();
-        $rec->method('resolve')->with('foo')->willReturn(['images', $this->mockParamGroup()]);
+        $signer->expects($this->exactly(0))->method('sign');
 
-        $builder = new UrlBuilder($signer, $rec);
+        $builder = new UrlBuilder($signer);
 
         $this->assertSame('foo:image.jpg', $builder->fromRecipe('foo', 'image.jpg'));
         $this->assertSame('foo/image.jpg', $builder->fromRecipe('foo', 'image.jpg', '/'));

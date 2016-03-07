@@ -11,6 +11,8 @@
 
 namespace Thapp\Jmg\Cache;
 
+use FilesystemIterator;
+
 /**
  * @class FileHelper
  *
@@ -26,7 +28,7 @@ trait FileHelper
      * @param string $file
      * @param string $contents
      *
-     * @return boolean
+     * @return bool
      */
     protected function dumpFile($file, $contents)
     {
@@ -74,7 +76,7 @@ trait FileHelper
      *
      * @param string $dir
      *
-     * @return boolean
+     * @return bool
      */
     protected function deleteDir($dir)
     {
@@ -94,7 +96,7 @@ trait FileHelper
      *
      * @param string $dir
      *
-     * @return boolean
+     * @return bool
      */
     protected function sweepDir($dir)
     {
@@ -102,7 +104,7 @@ trait FileHelper
             return false;
         }
 
-        foreach (new \FilesystemIterator($dir, \FilesystemIterator::SKIP_DOTS) as $path => $item) {
+        foreach (new FilesystemIterator($dir, FilesystemIterator::SKIP_DOTS) as $path => $item) {
             if ($item->isFile()) {
                 unlink($item);
                 continue;
@@ -121,7 +123,7 @@ trait FileHelper
      *
      * @param string $path
      *
-     * @return boolean
+     * @return bool
      */
     public function isFile($path)
     {
@@ -133,7 +135,7 @@ trait FileHelper
      *
      * @param string $path
      *
-     * @return boolean
+     * @return bool
      */
     public function isDir($path)
     {
@@ -145,7 +147,7 @@ trait FileHelper
      *
      * @param string $file
      *
-     * @return boolean
+     * @return bool
      */
     public function exists($file)
     {

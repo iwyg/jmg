@@ -22,32 +22,16 @@ namespace Thapp\Jmg\Cache;
  */
 abstract class AbstractCache implements CacheInterface
 {
-    /**
-     * pool
-     *
-     * @var array
-     */
+    /** @var array */
     protected $pool;
 
-    /**
-     * expires
-     *
-     * @var mixed
-     */
+    /** @var int */
     protected $expires;
 
-    /**
-     * prefix
-     *
-     * @var string
-     */
+    /** @var string */
     protected $prefix;
 
-    /**
-     * suffix
-     *
-     * @var string
-     */
+    /** @var string */
     protected $suffix;
 
     /**
@@ -175,7 +159,7 @@ abstract class AbstractCache implements CacheInterface
     /**
      * setExpires
      *
-     * @param mixed $minutes
+     * @param int $minutes
      *
      * @return void
      */

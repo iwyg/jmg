@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This File is part of the Thapp\Jmg\Filter package
+ * This File is part of the Thapp\Jmg package
  *
  * (c) iwyg <mail@thomas-appel.com>
  *
@@ -14,17 +14,23 @@ namespace Thapp\Jmg\Filter;
 /**
  * @trait ModulateFilterTrait
  *
- * @package Thapp\Jmg\Filter
+ * @package Thapp\Jmg
  * @version $Id$
  * @author iwyg <mail@thomas-appel.com>
  */
 trait ModulateFilterTrait
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function parseOption($option, $value)
     {
         return (float)$value;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function getShortOpts()
     {
         return ['b' => 'brightness', 's' => 'satturation', 'h' => 'hue'];
