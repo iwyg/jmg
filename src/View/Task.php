@@ -193,5 +193,4 @@ class Task
     {
         $this->params = null;
     }
-
 }

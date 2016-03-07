@@ -33,7 +33,7 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $string = '/some/image.jpg';
 
-        $gen = new Generator($jmg = $this->mockJmg());
+        $gen = new Generator($jmg = $this->mockJmg(), $this->mockTask());
         $jmg->method('apply')->willReturn($string);
 
         $this->assertSame($string, $gen->resize(500, 600));
@@ -46,39 +46,15 @@ class GeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function itShouldgetPath()
-    {
-        $gen = new Generator($jmg = $this->mockJmg());
-        $gen->setPath('foo');
-        $this->assertSame('foo', $gen->getPath());
-    }
-
-    /** @test */
-    public function itShouldgetSource()
-    {
-        $gen = new Generator($jmg = $this->mockJmg());
-        $gen->setSource('image.jpg');
-        $this->assertSame('image.jpg', $gen->getSource());
-    }
-
-    /** @test */
-    public function itShouldBeClonable()
-    {
-        $gen = new Generator($jmg = $this->mockJmg());
-        $gen->setPath('path');
-        $gen->setSource('image.jpg');
-
-        $clone = clone $gen;
-
-        $this->assertNull($clone->getPath());
-        $this->assertNull($clone->getSource());
-    }
-
-    /** @test */
     public function itFilterShouldReturnGenerator()
     {
         $gen = new Generator($jmg = $this->mockJmg());
         $this->assertSame($gen, $gen->filter('gs;c=1'));
+    }
+
+    protected function mockTask()
+    {
+        return $this->getMockBuilder('Thapp\Jmg\View\Task')->disableOriginalConstructor()->getMock();
     }
 
     protected function mockJmg()

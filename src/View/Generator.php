@@ -218,6 +218,10 @@ class Generator
      */
     private function apply($finish = false)
     {
+        if (null === $this->task) {
+            throw new \RuntimeException;
+        }
+
         if (!$finish) {
             $this->task->add($this->parameters, $this->filters);
         }
