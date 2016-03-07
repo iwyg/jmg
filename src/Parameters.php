@@ -218,9 +218,9 @@ class Parameters
      *
      * @return self
      */
-    public static function fromString($paramString, $separator = self::P_SEPARATOR)
+    public static function fromString($paramString, $separator = self::P_SEPARATOR, $use = null)
     {
-        return new static(static::parseString($paramString, $separator), $separator);
+        return new static(static::parseString($paramString, $separator), $use ?: $separator);
     }
 
     /**

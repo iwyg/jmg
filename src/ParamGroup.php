@@ -125,26 +125,54 @@ class ParamGroup
      *
      * @return self
      */
-    public static function fromString($params, $separator = '/', $fpfx = 'filter')
+    public static function fromString($params, $separator = '/', $fpfx = 'filter', $useSp = null)
     {
-        return new self(array_map(function ($str) use ($fpfx) {
+        return new self(array_map(function ($str) use ($separator, $fpfx, $useSp) {
             list ($params, $filter) = array_pad(explode($fpfx.':', $str), 2, null);
-            return [Parameters::fromString($params), $filter ? new FilterExpression($filter, $fpfx) : null];
+            $sp = $useSp ?: Parameters::P_SEPARATOR;
+            return [Parameters::fromString($params, $separator, $sp), $filter ? new FilterExpression($filter, $fpfx) : null];
         }, explode('|', $params)));
+    }
+
+    /**
+     * fromQuery
+     *
+     * @param array $query
+     * @param string $key
+     * @param string $separator
+     * @param string $fpfx
+     *
+     * @return self
+     */
+    public static function fromQuery(array $query, $key = 'jmg', $separator = ':', $fpfx = 'filter')
+    {
+        if (!isset($query[$key])) {
+            return new self;
+        }
+
+        if (is_string($query[$key])) {
+            $string = $query[$key];
+        } elseif (is_array($query[$key])) {
+            $string = implode('|', $query[$key]);
+        } else {
+            throw new \InvalidArgumentException;
+        }
+
+        return self::fromString($string, $separator, $fpfx);
     }
 
     /**
      * @param Parameters $params
      * @param FilterExpression $filters
-     * @param string $ftl
+     * @param string $sp
      *
      * @return string
      */
-    public static function getQueryString(Parameters $params, FilterExpression $filters = null)
+    public static function getQueryString(Parameters $params, FilterExpression $filters = null, $sp = ':')
     {
         $fPrefix = null !== $filters && '' !== $filters->getPrefix() ? ':'. $filters->getPrefix() : '';
 
-        $pStr = str_replace($params->getSeparator(), ':', (string)$params);
+        $pStr = str_replace($params->getSeparator(), $sp, (string)$params);
         return null === $filters || 0 === count($filters->all()) ?
             $pStr : sprintf('%s%s:%s', $pStr, $fPrefix, (string)($filters));
     }

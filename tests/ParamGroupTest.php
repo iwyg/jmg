@@ -30,6 +30,26 @@ class ParamGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function itShouldCreateGroupFromQueryParams()
+    {
+        $q = ['jmg' => '2:200:200:5'];
+        $params = ParamGroup::fromQuery($q);
+
+        $all = $params->all();
+
+        $this->assertSame('2/200/200/5', (string)$all[0][0]);
+
+        $q = ['jmg' => ['2:200:200:5:filter:circle', '1:100:0']];
+        $params = ParamGroup::fromQuery($q);
+
+        $all = $params->all();
+
+        $this->assertSame('2/200/200/5', (string)$all[0][0]);
+        $this->assertSame('circle', (string)$all[0][1]);
+        $this->assertSame('1/100/0', (string)$all[1][0]);
+    }
+
+    /** @test */
     public function itShouldTranspileToQuery()
     {
         $group = ParamGroup::fromString('1/600/0:gray;c=1;v=1|2/400/400/5', '/', '');
