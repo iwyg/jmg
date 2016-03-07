@@ -211,24 +211,6 @@ class Parameters
     }
 
     /**
-     * toChainedQueryString
-     *
-     * @param array $params
-     * @param string $filter
-     *
-     * @return string
-     */
-    public static function toChainedQueryString(array $params, $filter = 'filter')
-    {
-        $q = array_map(function ($p) use ($filter) {
-            list ($param, $filters) = array_pad($p, 2, null);
-            return self::getChainedQString($param, $filters, $filter);
-        }, $params);
-
-        return http_build_query(['jmg' => $q]);
-    }
-
-    /**
      * Creates new Parameters from string.
      *
      * @param string $paramString
@@ -242,47 +224,6 @@ class Parameters
     }
 
     /**
-     * Creates new Parameters from query params.
-     *
-     * @param array $query
-     *
-     * @return self
-     */
-    public static function fromQuery(array $query)
-    {
-        $query = static::mapMode($query);
-
-        $params = array_merge($default = static::defaults(), $query);
-
-        if (null === $params['mode']) {
-            $params['mode'] = 0;
-        }
-
-        extract(array_intersect_key($params, $default));
-
-        return new static(static::sanitize($mode, $width, $height, $gravity, $background));
-    }
-
-    /**
-     * @param array $query
-     * @param string $filter
-     *
-     * @return array
-     */
-    public static function fromChainedQuery(array $query, $filter = 'filter')
-    {
-        if (!isset($query['jmg'])) {
-            return [];
-        }
-
-        return array_map(function ($qstr) use ($filter) {
-            list($params, $filters) = array_pad(explode($filter.':', $qstr), 2, '');
-            return [self::fromString($params, ':'), new FilterExpression($filters, $filter)];
-        }, (array)$query['jmg']);
-
-    }
-
-    /**
      * isColor
      *
      * @param mixed $color
@@ -292,46 +233,6 @@ class Parameters
     private function isColor($color)
     {
         return static::isHex($color);
-    }
-
-    /**
-     * @param array $query
-     *
-     * @return array
-     */
-    private static function mapMode(array $query)
-    {
-        $map = [
-            'mode'=> isset($query['mode']) ? (int)$query['mode'] : ProcessorInterface::IM_NOSCALE,
-        ];
-
-        if (empty($query)) {
-            return $map;
-        }
-
-        $map = array_merge($map, static::$qMap);
-        $type = array_reduce(array_keys($query), function ($a, $b) use ($map) {
-            return isset($map[$b]) ? $b :
-                (isset($map[$a]) ? $a :  'mode');
-        });
-
-        $query['mode'] = $map[$type];
-
-        return $query;
-    }
-
-    /**
-     * @param Parameters $params
-     * @param FilterExpression $filters
-     * @param string $ftl
-     *
-     * @return string
-     */
-    private static function getChainedQString(Parameters $params, FilterExpression $filters = null, $ftl = 'filter')
-    {
-        $pStr = str_replace($params->getSeparator(), ':', (string)$params);
-        return null === $filters || 0 === count($filters->all()) ?
-            $pStr : sprintf('%s:%s:%s', $pStr, $ftl, (string)($filters));
     }
 
     /**

@@ -2,10 +2,9 @@
 
 namespace Thapp\Jmg\Tests\Http;
 
+use Thapp\Jmg\ParamGroup;
 use Thapp\Jmg\Http\UrlSigner;
 use Thapp\Jmg\Http\UrlBuilder;
-use Thapp\Jmg\Parameters;
-use Thapp\Jmg\FilterExpression;
 use Thapp\Jmg\Exception\InvalidSignatureException;
 
 class UrlSignerTest extends \PHPUnit_Framework_TestCase
@@ -44,11 +43,10 @@ class UrlSignerTest extends \PHPUnit_Framework_TestCase
     public function itShouldSignAndValidate()
     {
         $url = new UrlBuilder;
-        $params = Parameters::fromString('2/100/100/5');
-        $filters = new FilterExpression('circle;o=12;c=#f00');
+        $params = ParamGroup::fromString('2/100/100/5/filter:circle;o=12;c=#f00');
 
         $signer = new UrlSigner('secretkey', 'token');
-        $signed = $signer->sign($uri = $url->getUri('image.jpg', $params, $filters, 'images', true), $params, $filters);
+        $signed = $signer->sign($uri = $url->asQuery('image.jpg', 'images', $params), $params);
 
         $parts = parse_url($signed);
 
@@ -59,7 +57,7 @@ class UrlSignerTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('token', $res);
 
         try {
-            $this->assertTrue($signer->validate($signed, $params, $filters));
+            $this->assertTrue($signer->validate($signed, $params));
         } catch (InvalidSignatureException $e) {
             $this->fail($e->getMessage());
         }
@@ -74,10 +72,10 @@ class UrlSignerTest extends \PHPUnit_Framework_TestCase
      */
     protected function mockParameters($str = '0')
     {
-        $mock = $this->getMockBuilder('Thapp\Jmg\Parameters')
+        $mock = $this->getMockBuilder('Thapp\Jmg\ParamGroup')
             ->disableOriginalConstructor()
             ->getMock();
-        $mock->method('asString')->willReturn($str);
+        $mock->method('__toString')->willReturn($str);
 
         return $mock;
     }

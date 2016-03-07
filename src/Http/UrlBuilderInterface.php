@@ -11,8 +11,8 @@
 
 namespace Thapp\Jmg\Http;
 
-use Thapp\Jmg\Parameters;
-use Thapp\Jmg\FilterExpression;
+use Thapp\Jmg\ParamGroup;
+use Thapp\Jmg\Resource\CachedResourceInterface;
 
 /**
  * @interface UrlBuilderInterface
@@ -24,13 +24,49 @@ use Thapp\Jmg\FilterExpression;
 interface UrlBuilderInterface
 {
     /**
-     * getUri
+     * Creates an uri based on a prefix
      *
-     * @param Parameters $params
-     * @param FilterExpression $filters
-     * @param string $prefix
+     * @param string  $prefix    prefix of `$src`.
+     * @param string  $src       the image source
+     * @param Params  $params    the parameter object
+     * @param Filters $filters   the filter objects
+     * @param string  $separator the separator between `$prefix` and `$src`
      *
      * @return string
      */
-    public function getUri($source, Parameters $params, FilterExpression $filters = null, $prefix = '');
+    public function withParams($prefix, $src, ParamGroup $params, $separator = ':');
+
+    /**
+     * Creates an URI assuming a jmg query.
+     *
+     * @param string  $prefix    prefix of `$src`.
+     * @param string  $src       the image source
+     * @param array   $params    an array of [[Params, Filters]]
+     * @param string  $separator the separator between `$prefix` and `$src`
+     *
+     * @return void
+     */
+    public function asQuery($prefix, $src, ParamGroup $params, $separator = ':');
+
+    /**
+     * fromRecipe
+     *
+     * @param string $src
+     * @param string $recipe
+     * @param string $separator
+     *
+     * @return string
+     */
+    public function fromRecipe($recipe, $src, $separator = ':');
+
+    /**
+     * fromCached
+     *
+     * @param CachedResourceInterface $resource
+     * @param mixed $path
+     * @param mixed $prefix
+     *
+     * @return string
+     */
+    public function fromCached(CachedResourceInterface $resource, $path, $prefix);
 }

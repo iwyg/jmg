@@ -11,15 +11,16 @@
 
 namespace Thapp\Jmg\Resolver;
 
-use Thapp\Jmg\ProcessorInterface;
+use OutOfBoundsException;
+use InvalidArgumentException;
+use Thapp\Jmg\ParamGroup;
 use Thapp\Jmg\Parameters as Params;
+use Thapp\Jmg\ProcessorInterface;
 use Thapp\Jmg\Resource\ImageResource;
 use Thapp\Jmg\Loader\LoaderInterface;
 use Thapp\Jmg\FilterExpression as Filters;
 use Thapp\Jmg\Validator\ValidatorInterface;
 use Thapp\Jmg\Cache\CacheInterface as Cache;
-use OutOfBoundsException;
-use InvalidArgumentException;
 
 /**
  * @class ImageResolver
@@ -109,25 +110,17 @@ class ImageResolver implements ImageResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve($src, Params $params, Filters $filters = null, $prefix = '')
+    public function resolve($src, ParamGroup $params, $alias = '')
     {
-        return $this->doResolve($src, $params, $filters, $prefix);
+        if (!isset($this->pool[$pk = $this->poolKey($alias, $src, $params)])) {
+            $this->pool[$pk] = $this->resolveImage($src, $params, $alias);
+        }
+
+        return $this->pool[$pk];
     }
 
     /**
      * {@inheritdoc}
-     */
-    public function resolveChained($src, array $params, $prefix = '')
-    {
-        return $this->doResolve($src, $params, null, $prefix);
-    }
-
-    /**
-     * Resolve the url parameters to a cached image resource.
-     *
-     * @param array $params
-     *
-     * @return ResourceInterface
      */
     public function resolveCached($prefix, $id)
     {
@@ -152,25 +145,6 @@ class ImageResolver implements ImageResolverInterface
     }
 
     /**
-     * doResolve
-     *
-     * @param mixed $src
-     * @param mixed $params
-     * @param mixed $filters
-     * @param string $prefix
-     *
-     * @return ImageResourceInterface
-     */
-    private function doResolve($src, $params, $filters = null, $prefix = '')
-    {
-        if (!isset($this->pool[$pk = $this->poolKey($prefix, $src, $params, $filters)])) {
-            $this->pool[$pk] = $this->resolveImage($src, $params, $filters, $prefix);
-        }
-
-        return $this->pool[$pk];
-    }
-
-    /**
      * resolveImage
      *
      * @param mixed $src
@@ -180,7 +154,7 @@ class ImageResolver implements ImageResolverInterface
      *
      * @return ResourceInterface
      */
-    protected function resolveImage($src, $params, Filters $filters = null, $prefix = '')
+    protected function resolveImage($src, ParamGroup $params, $prefix = '')
     {
         $alias = trim($prefix, '/');
 
@@ -194,19 +168,9 @@ class ImageResolver implements ImageResolverInterface
 
         $key       = null;
         $cache     = $this->cacheResolver ? $this->cacheResolver->resolve($alias) : null;
+        $paramStr  = (string)$params;
 
-        if ($params instanceof Params) {
-            $paramStr  = (string)$params;
-            $filterStr = $filters ? (string)$filters : null;
-            $params    = [[$params, $filters]];
-        } elseif (is_array($params)) {
-            $paramStr  = urldecode(Params::toChainedQueryString($params));
-            $filterStr = '';
-        } else {
-            throw new InvalidArgumentException('');
-        }
-
-        if (null !== $cache && $cache->has($key = $this->cacheKey($cache, $alias, $src, $paramStr, $filterStr)) &&
+        if (null !== $cache && $cache->has($key = $this->cacheKey($cache, $alias, $src, $paramStr)) &&
             $resource = $cache->get($key)
         ) {
             return $resource;
@@ -232,9 +196,9 @@ class ImageResolver implements ImageResolverInterface
      *
      * @return void
      */
-    private function validateParams(array $params)
+    private function validateParams(ParamGroup $params)
     {
-        foreach ($params as $paramsArray) {
+        foreach ($params->all() as $paramsArray) {
             $this->validateParam($paramsArray[0]);
         }
     }
@@ -265,13 +229,9 @@ class ImageResolver implements ImageResolverInterface
     /**
      * {@inheritdoc}
      */
-    private function poolKey($name, $source, $params, Filters $filters = null)
+    private function poolKey($name, $source, ParamGroup $params = null)
     {
-        if ($params instanceof Params) {
-            return sprintf('%s/%s:%s%s', $name, $source, (string)$params, $filters ? '/filter:'.($filters) : '');
-        }
-
-        return sprintf('%s/%s:%s', $name, $source, urldecode(Params::toChainedQueryString($params)));
+        return sprintf('%s/%s:%s', $name, $source, $params);
     }
 
     /**
@@ -283,14 +243,9 @@ class ImageResolver implements ImageResolverInterface
      *
      * @return string
      */
-    private function cacheKey(Cache $cache, $name, $src, $paramStr, $filterStr)
+    private function cacheKey(Cache $cache, $name, $src, $paramStr)
     {
-        return $cache->createKey(
-            $src,
-            $name,
-            $paramStr.'/'.$filterStr,
-            pathinfo($src, PATHINFO_EXTENSION)
-        );
+        return $cache->createKey($src, $name, $paramStr, pathinfo($src, PATHINFO_EXTENSION));
     }
 
     /**
@@ -349,9 +304,9 @@ class ImageResolver implements ImageResolverInterface
      *
      * @return Thapp\Jmg\Resource\ImageResourceInterface
      */
-    private function runProc($source, array $params, Cache $cache = null, $key = null)
+    private function runProc($source, ParamGroup $params, Cache $cache = null, $key = null)
     {
-        foreach ($params as $pargs) {
+        foreach ($params->all() as $pargs) {
             call_user_func_array([$this->processor, 'process'], $pargs);
         }
 
