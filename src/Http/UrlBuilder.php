@@ -11,8 +11,7 @@
 
 namespace Thapp\Jmg\Http;
 
-use Thapp\Jmg\Parameters;
-use Thapp\Jmg\FilterExpression;
+use Thapp\Jmg\ParamGroup;
 use Thapp\Jmg\Cache\CacheInterface;
 use Thapp\Jmg\Resource\CachedResourceInterface;
 use Thapp\Jmg\Resolver\RecipeResolverInterface;
@@ -29,98 +28,74 @@ class UrlBuilder implements UrlBuilderInterface
     /** @var HttpSignerInterface */
     private $signer;
 
+    /** @var RecipeResolverInterface */
+    private $recipes;
+
     /**
      * Constructor.
      *
      * @param HttpSignerInterface $signer
      */
-    public function __construct(HttpSignerInterface $signer = null)
+    public function __construct(HttpSignerInterface $signer = null, RecipeResolverInterface $recipes = null)
     {
-        $this->signer  = $signer;
+        $this->signer = $signer;
+        $this->recipes = $recipes;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getUri($source, Parameters $params, FilterExpression $filters = null, $prefix = '', $q = false)
+    public function withParams($prefix, $src, ParamGroup $params, $separator = ':')
     {
-        $path = $this->createImageUri($source, $params, $filters, $prefix, $q);
-
-        if (null !== $this->signer) {
-            return $this->signer->sign($path, $params, $filters);
-        }
-
-        return $path;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRecipeUri($source, $recipe, Parameters $params, FilterExpression $filters = null)
-    {
-        $path = $this->createRecipeUri($recipe, $source);
-
-        if (null !== $this->signer) {
-            return $this->signer->sign($path, $params, $filters);
-        }
-
-        return $path;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCachedUri(CachedResourceInterface $resource, $name, $prefix)
-    {
-        $basePath = strtr($resource->getKey(), ['.' => '/']);
-
-        return sprintf(
-            '/%s/%s/%s%s',
-            $prefix,
-            $name,
-            $this->getCachedPathBasePath($resource),
-            $this->getCachedPathExtension($resource)
+        return $this->getSigned(
+            sprintf('/%s/%s/%s', trim($prefix, '/'), (string)$params, $src),
+            $params
         );
     }
 
     /**
-     * createImageUri
-     *
-     * @param Parameters $params
-     * @param FilterExpression $filters
-     * @param string $prefix
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    protected function createImageUri($src, Parameters $params, FilterExpression $filters = null, $pfx = '', $q = false)
+    public function asQuery($prefix, $src, ParamGroup $params, $separator = ':')
     {
-        $prefix = trim($pfx, '/');
-
-        if ($q) {
-            $qparams = array_merge($params->all(), $filters ? [$filters->getPrefix() => $filters->all()] : []);
-            $queryString = http_build_query($qparams, null, '&', PHP_QUERY_RFC3986);
-            $path = sprintf('%s/%s?%s', $prefix, $src, $queryString);
-        } else {
-            $filterString = $this->getFiltersAsString($filters);
-            $path = sprintf('%s/%s/%s', trim($prefix, '/'), (string)$params, $src, $filterString);
-        }
-        return '/'.$path;
+        return $this->getSigned(
+            sprintf('%s%s%s?%s', $prefix, $separator, $src, $params->toQueryString()),
+            $params
+        );
     }
 
     /**
-     * getFiltersAsString
-     *
-     * @param FilterExpression $filters
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    protected function getFiltersAsString(FilterExpression $filters = null)
+    public function fromRecipe($recipe, $src, $separator = ':')
     {
-        if (null !== $filters && 0 < count($filters->all())) {
-            return sprintf('/%s:%s', $filters->getPrefix(), (string)$filter);
+        if (null === $this->recipes) {
+            throw new \LogicException('Can\'t build uri for recipes without resolver.');
         }
 
-        return '';
+        if (!$recipes = $this->recipes->resolve($recipe)) {
+            throw new \InvalidArgumentException(sprintf('Can\'t build uri for recipe "%s".', $recipe));
+        }
+
+        list ($alias, $params) = $recipes;
+        $path = sprintf('%s%s%s', $recipe, $separator, trim($src, '/'));
+
+        if (null !== $this->signer) {
+            return $this->signer->sign($path, $params);
+        }
+
+        return $path;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fromCached(CachedResourceInterface $resource, $path, $prefix)
+    {
+        $cname = $this->getCachedPathBasePath($resource);
+        $cext = $this->getCachedPathExtension($resource);
+
+        return sprintf('/%s/%s/%s%s', $path, $prefix, $cname, $cext);
     }
 
     /**
@@ -152,15 +127,19 @@ class UrlBuilder implements UrlBuilderInterface
     }
 
     /**
-     * createRecipeUri
+     * getSigned
      *
-     * @param string $recipe
-     * @param string $source
+     * @param mixed $uri
+     * @param ParamGroup $params
      *
-     * @return string
+     * @return void
      */
-    protected function createRecipeUri($recipe, $source)
+    protected function getSigned($uri, ParamGroup $params)
     {
-        return '/'.trim($recipe, '/') . '/' . trim($source, '/');
+        if (null === $this->signer) {
+            return $uri;
+        }
+
+        return $this->signer->sign($uri, $params);
     }
 }

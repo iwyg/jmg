@@ -11,8 +11,7 @@
 
 namespace Thapp\Jmg\Resolver;
 
-use Thapp\Jmg\Parameters;
-use Thapp\Jmg\FilterExpression;
+use Thapp\Jmg\ParamGroup;
 
 /**
  * @interface ImageResolverInterface
@@ -26,26 +25,15 @@ interface ImageResolverInterface
     /**
      * Resolves an image resource by parameters.
      *
-     * @param Parameters $parameters
+     * @param ParamGroup $parameters
      * @param FilterExpression $filters
      *
      * @return Thapp\Jmg\Resource\ImageResourceInterface
      */
-    public function resolve($src, Parameters $params, FilterExpression $filters = null, $prefix = '');
+    public function resolve($src, ParamGroup $params, $alias = '');
 
     /**
-     * resolveChained
-     *
-     * @param mixed $src
-     * @param array $params
-     * @param string $prefix
-     *
-     * @return Thapp\Jmg\Resource\ImageResourceInterface
-     */
-    public function resolveChained($src, array $params, $prefix = '');
-
-    /**
-     * Resolves a cached image by path and prefix.
+     * Resolves a cached image by id (path) and prefix.
      *
      * @param array $parameters
      *

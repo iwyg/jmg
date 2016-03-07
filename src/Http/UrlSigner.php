@@ -11,8 +11,7 @@
 
 namespace Thapp\Jmg\Http;
 
-use Thapp\Jmg\Parameters;
-use Thapp\Jmg\FilterExpression;
+use Thapp\Jmg\ParamGroup;
 use Thapp\Jmg\Exception\InvalidSignatureException;
 
 /**
@@ -45,18 +44,18 @@ class UrlSigner implements HttpSignerInterface
     /**
      * {@inheritdoc}
      */
-    public function sign($path, Parameters $params, FilterExpression $filters = null)
+    public function sign($path, ParamGroup $params)
     {
         $prefix = false !== mb_strpos($path, '?') ? '&' : '?';
         $uri = parse_url($path, PHP_URL_PATH);
 
-        return $path.$prefix.http_build_query([$this->qkey => $this->createSignature($uri, $params, $filters)]);
+        return $path.$prefix.http_build_query([$this->qkey => $this->createSignature($uri, $params)]);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function validate($uri, Parameters $params, FilterExpression $filters = null)
+    public function validate($uri, ParamGroup $params)
     {
         $qkey = $this->getQParamKey();
         $parts =  parse_url($uri);
@@ -72,8 +71,7 @@ class UrlSigner implements HttpSignerInterface
         }
 
         // dont care about queries
-        //$path = preg_replace(sprintf('#(&?%s=[0-9a-z]+)#x', preg_quote($qkey, '#')), null, $uri);
-        if (0 !== strcmp($qparams[$qkey], $this->createSignature($parts['path'], $params, $filters))) {
+        if (0 !== strcmp($qparams[$qkey], $this->createSignature($parts['path'], $params))) {
             throw InvalidSignatureException::invalidSignature();
         }
 
@@ -99,13 +97,11 @@ class UrlSigner implements HttpSignerInterface
      *
      * @return string
      */
-    protected function createSignature($path, Parameters $params, FilterExpression $filters = null)
+    protected function createSignature($path, ParamGroup $params)
     {
-        $filterStr = null !== $filters && 0 < count($filters->all()) ? (string)$filters : '';
-
         return hash(
             'sha1',
-            sprintf('%s:%s%sfilter:%s', $this->key, trim($path, '/'), (string)$params, $filterStr)
+            sprintf('%s:%s%s', $this->key, trim($path, '/'), (string)$params)
         );
     }
 }

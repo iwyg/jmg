@@ -11,8 +11,7 @@
 
 namespace Thapp\Jmg\Http;
 
-use Thapp\Jmg\Parameters;
-use Thapp\Jmg\FilterExpression;
+use Thapp\Jmg\ParamGroup;
 
 /**
  * @interface HttpSignerInterface
@@ -24,7 +23,7 @@ use Thapp\Jmg\FilterExpression;
 interface HttpSignerInterface
 {
     /**
-     * sing
+     * Signs a path.
      *
      * @param string $path
      * @param Parameters $params
@@ -32,5 +31,15 @@ interface HttpSignerInterface
      *
      * @return string
      */
-    public function sign($path, Parameters $params, FilterExpression $filters = null);
+    public function sign($path, ParamGroup $params);
+
+    /**
+     * Validates a given path against a paramgroup
+     *
+     * @param string $path
+     * @param ParamGroup $params
+     *
+     * @return void
+     */
+    public function validate($path, ParamGroup $params);
 }

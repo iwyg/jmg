@@ -12,6 +12,7 @@
 namespace Thapp\Jmg\Resolver;
 
 use Thapp\Jmg\Parameters;
+use Thapp\Jmg\ParamGroup;
 use Thapp\Jmg\FilterExpression;
 
 /**
@@ -23,22 +24,33 @@ use Thapp\Jmg\FilterExpression;
  */
 class RecipeResolver implements RecipeResolverInterface
 {
-    /**
-     * params
-     *
-     * @var array
-     */
+    /** @var array */
     private $recipes;
 
     /**
-     * @param array $params
+     * Constructor.
      *
-     * @access public
-     * @return mixed
+     * @param array $params
      */
     public function __construct(array $params = [])
     {
         $this->set($params);
+    }
+
+    /**
+     * Resolves a recipe alias to a path alias/ParamGroup pair.
+     *
+     * @param string $recipe
+     *
+     * @return array [String, ParamGroup]
+     */
+    public function resolve($recipe)
+    {
+        if (!isset($this->recipes[$recipe = trim($recipe, '/')])) {
+            return;
+        }
+
+        return $this->recipes[$recipe];
     }
 
     /**
@@ -50,18 +62,20 @@ class RecipeResolver implements RecipeResolverInterface
      */
     public function set(array $recipes)
     {
-        foreach ($recipes as $recipe => $params) {
-            if (2 > $count = count($params)) {
+        $this->recipes = [];
+
+        foreach ($recipes as $recipe => $values) {
+            if (2 !== $count = count($values)) {
                 continue;
             }
 
-            if (!$args = $this->getRecipeArgs($params)) {
+            if (null === $args = $this->getRecipeArgs($values)) {
                 continue;
             }
 
-            list($path, $parameters, $filters) = $args;
+            list($alias, $params) = $args;
 
-            $this->add($recipe, $path, $parameters, $filters);
+            $this->add($recipe, $alias, $params);
         }
     }
 
@@ -75,46 +89,27 @@ class RecipeResolver implements RecipeResolverInterface
      *
      * @return void
      */
-    public function add($recipe, $path, Parameters $params, FilterExpression $filters = null)
+    public function add($recipe, $alias, ParamGroup $params)
     {
-        $this->recipes[trim($recipe, '/')] = [$path, $params, $filters];
+        $this->recipes[trim($recipe, '/')] = [$alias, $params];
     }
 
     /**
-     * resolve
+     * getRecipeArgs
      *
-     * @param mixed $recipe
+     * @param array $values
      *
-     * @access public
-     * @return mixed
+     * @return array
      */
-    public function resolve($recipe)
+    private function getRecipeArgs(array $values)
     {
-        if (!isset($this->recipes[$recipe = trim($recipe, '/')])) {
+        list ($alias, $param) = $values;
+
+        if (!is_string($alias)) {
             return;
         }
 
-        return $this->recipes[$recipe];
-
-        //list($path, $parameter) = $this->recipes[$recipe];
-        //list($parameters, $filter) = array_pad(explode(',', str_replace(' ', null, $parameter)), 2, null);
-
-        //$filter = 0 === strpos($filter, 'filter:') ? substr($filter, 7) : $filter;
-
-        //return [$path, $parameters, $filter];
-    }
-
-    private function getRecipeArgs(array $params)
-    {
-        if (is_string($params[1])) {
-            list($parameters, $filter) = array_pad(explode(',', str_replace(' ', null, $params[1])), 2, null);
-            return [$params[0], Parameters::fromString($parameters), $filter ? new FilterExpression($filter) : null];
-        }
-
-        if ($params[1] instanceof Parameters) {
-            return [$params[0], $params[1], isset($params[2]) ? $params[2] : null];
-        }
-
-        return false;
+        return $param instanceof ParamGroup ? [$alias, $param] :
+            [$alias, ParamGroup::fromString($param ?: '0')];
     }
 }

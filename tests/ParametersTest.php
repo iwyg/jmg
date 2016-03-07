@@ -31,28 +31,6 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @dataProvider queryParamProvider
-     */
-    public function itShouldCreateParamsFromQueryParams($q, $expected)
-    {
-        $params = Parameters::fromQuery($q);
-        $this->assertSame($expected, (string)$params);
-    }
-
-    /** @test */
-    public function itShouldParseQueryParamsToInt()
-    {
-        $q = ['mode' => '2', 'width' => '220', 'height' => '220', 'gravity' => '5'];
-
-        $params = Parameters::fromQuery($q)->all();
-        $this->assertSame(2, $params['mode']);
-        $this->assertSame(5, $params['gravity']);
-        $this->assertSame(220, $params['width']);
-        $this->assertSame(220, $params['height']);
-    }
-
-    /**
-     * @test
      * @dataProvider paramStringProvider
      */
     public function itShouldParseParamString($str, $expected)
@@ -60,25 +38,6 @@ class ParametersTest extends \PHPUnit_Framework_TestCase
         $params = Parameters::fromString($str);
 
         $this->assertEquals($expected, $params->all());
-    }
-
-    /** @test */
-    public function itShouldParseStringFromQueryChain()
-    {
-        $q = [
-            'jmg' => [
-                '1:500:0:filter:foo;o=2:bar;c=fff',
-                '2:200:200:5'
-            ]
-        ];
-
-        $params = Parameters::fromChainedQuery($q);
-
-        $this->assertSame(2, count($params));
-        $this->assertInstanceOf('Thapp\Jmg\Parameters', $params[0][0]);
-        $this->assertInstanceOf('Thapp\Jmg\Parameters', $params[1][0]);
-        $this->assertInstanceOf('Thapp\Jmg\FilterExpression', $params[0][1]);
-        $this->assertInstanceOf('Thapp\Jmg\FilterExpression', $params[1][1]);
     }
 
     public function paramStringProvider()

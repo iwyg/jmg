@@ -23,7 +23,7 @@ interface RecipeResolverInterface extends ResolverInterface
     /**
      * set
      *
-     * @param array $recipes
+     * @param array $recipes [String, String]
      *
      * @return void
      */

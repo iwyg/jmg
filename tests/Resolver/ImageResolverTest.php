@@ -43,7 +43,7 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
         $this->loaders->expects($this->once())->method('resolve')->with('media')->willReturn(null);
         $this->proc->expects($this->exactly(0))->method('process');
 
-        $this->assertFalse($res->resolve('image.jpg', $this->mockParams('0'), null, 'media'));
+        $this->assertFalse($res->resolve('image.jpg', $this->mockParamGroup('0'), 'media'));
     }
 
     /** @test */
@@ -56,7 +56,7 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
         $this->paths->expects($this->once())->method('resolve')->willReturn(null);
         $this->proc->expects($this->exactly(0))->method('process');
 
-        $this->assertFalse($res->resolve('image.jpg', $this->mockParams('0'), null, 'media'));
+        $this->assertFalse($res->resolve('image.jpg', $this->mockParamGroup('0'), 'media'));
     }
 
     /** @test */
@@ -69,7 +69,10 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->proc->expects($this->once())->method('process');
 
-        $res->resolve('image.jpg', $this->mockParams('0'), null, 'media');
+        $params = $this->mockParamGroup('0');
+        $params->method('all')->willReturn([[$this->mockParams('0'), null]]);
+
+        $res->resolve('image.jpg', $params, 'media');
     }
 
     /** @test */
@@ -82,12 +85,14 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
         $this->paths->expects($this->once())->method('resolve')->willReturn('path');
         $this->proc->expects($this->exactly(2))->method('process');
 
-        $params = [
+        $all = [
             [$a = $this->mockParams('1/200/0')],
             [$b = $this->mockParams('2/100/100/5'), $this->mockFilter('color;q=1;c=fff')],
         ];
+        $params = $this->mockParamGroup('1/200/0|2/100/100/5:filter:color;q=1;c=fff');
+        $params->method('all')->willReturn($all);
 
-        $res->resolveChained('image.jpg', $params, 'path');
+        $res->resolve('image.jpg', $params, 'path');
     }
 
     /** @test */
@@ -99,7 +104,10 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->proc->expects($this->once())->method('process');
 
-        $res->resolve('image.jpg', $this->mockParams('0'), null, 'media');
+        $params = $this->mockParamGroup('0');
+        $params->method('all')->willReturn([[$this->mockParams('0'), null]]);
+
+        $res->resolve('image.jpg', $params, 'media');
     }
 
     /** @test */
@@ -112,7 +120,10 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->proc->expects($this->once())->method('process');
 
-        $res->resolve('image.jpg', $this->mockParams('0'), null, 'media');
+        $params = $this->mockParamGroup('0');
+        $params->method('all')->willReturn([[$this->mockParams('0'), null]]);
+
+        $res->resolve('image.jpg', $params, 'media');
     }
 
     /** @test */
@@ -125,8 +136,11 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->proc->expects($this->exactly(0))->method('process');
 
+        $params = $this->mockParamGroup('0');
+        $params->method('all')->willReturn([[$this->mockParams('0'), null]]);
+
         try {
-            $res->resolve('image.jpg', $this->mockParams('0'), null, 'media');
+            $res->resolve('image.jpg', $params, 'media');
         } catch (\OutOfBoundsException $e) {
             $this->assertTrue(true);
             return;
@@ -144,9 +158,12 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->proc->expects($this->exactly(0))->method('process');
 
+        $params = $this->mockParamGroup('0');
+        $params->method('all')->willReturn([[$this->mockParams('0'), null]]);
+
         $this->assertInstanceof(
             'Thapp\Jmg\Resource\ResourceInterface',
-            $res->resolve('image.jpg', $this->mockParams('0'), null, 'media')
+            $res->resolve('image.jpg', $params, 'media')
         );
     }
 
@@ -284,6 +301,16 @@ class ImageResolverTest extends \PHPUnit_Framework_TestCase
     protected function mockCache()
     {
         return $this->getMock('Thapp\Jmg\Cache\CacheInterface');
+    }
+
+    protected function mockParamGroup($str = '')
+    {
+        $param = $this->getMockBuilder('Thapp\Jmg\ParamGroup')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $param->method('__toString')->willReturn($str);
+
+        return $param;
     }
 
     protected function mockParams($str = '')
