@@ -11,6 +11,8 @@
 
 namespace Thapp\Jmg;
 
+use InvalidArgumentException;
+
 /**
  * @class ParamGroup
  *
@@ -94,7 +96,7 @@ class ParamGroup
      */
     public function __toString()
     {
-        if ($this->string) {
+        if (null !== $this->string) {
             return $this->string;
         }
 
@@ -107,7 +109,6 @@ class ParamGroup
 
     /**
      * all
-     *
      *
      * @return array
      */
@@ -127,10 +128,14 @@ class ParamGroup
      */
     public static function fromString($params, $separator = '/', $fpfx = 'filter', $useSp = null)
     {
-        return new self(array_map(function ($str) use ($separator, $fpfx, $useSp) {
+        $sp = $useSp ?: Parameters::P_SEPARATOR;
+
+        return new self(array_map(function ($str) use ($separator, $fpfx, $sp) {
             list ($params, $filter) = array_pad(explode($fpfx.':', $str), 2, null);
-            $sp = $useSp ?: Parameters::P_SEPARATOR;
-            return [Parameters::fromString($params, $separator, $sp), $filter ? new FilterExpression($filter, $fpfx) : null];
+            return [
+                Parameters::fromString($params, $separator, $sp),
+                $filter ? new FilterExpression($filter, $fpfx) : null
+            ];
         }, explode('|', $params)));
     }
 
@@ -155,7 +160,7 @@ class ParamGroup
         } elseif (is_array($query[$key])) {
             $string = implode('|', $query[$key]);
         } else {
-            throw new \InvalidArgumentException;
+            throw new InvalidArgumentException('Argument mus be string or array.');
         }
 
         return self::fromString($string, $separator, $fpfx);
@@ -171,8 +176,8 @@ class ParamGroup
     public static function getQueryString(Parameters $params, FilterExpression $filters = null, $sp = ':')
     {
         $fPrefix = null !== $filters && '' !== $filters->getPrefix() ? ':'. $filters->getPrefix() : '';
+        $pStr    = str_replace($params->getSeparator(), $sp, (string)$params);
 
-        $pStr = str_replace($params->getSeparator(), $sp, (string)$params);
         return null === $filters || 0 === count($filters->all()) ?
             $pStr : sprintf('%s%s:%s', $pStr, $fPrefix, (string)($filters));
     }
