@@ -143,8 +143,11 @@ class FileResource extends AbstractResource implements FileResourceInterface
     protected function findMimeType(array $meta, $mime = null)
     {
         if (null === $mime && $this->isLocal()) {
-            list($mime, ) = explode(';', finfo_file($info = finfo_open(FILEINFO_MIME), $this->getPath()));
+            if (!is_readable($path = $this->getPath())) {
+                throw new \RuntimeException(sprintf('File "%s" is not readable.', $path));
+            }
 
+            list($mime, ) = explode(';', finfo_file($info = finfo_open(FILEINFO_MIME), $path));
             finfo_close($info);
         }
 
