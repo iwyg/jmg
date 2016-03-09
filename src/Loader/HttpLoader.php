@@ -75,7 +75,7 @@ class HttpLoader extends AbstractLoader
         }
 
         if (!$resource = $this->validate($handle)) {
-            throw new SourceLoaderException(sprintf('File "%s" is not an image.', $file));
+            throw new SourceLoaderException(sprintf('File "%s" is not an image.', $url));
         }
 
         return $resource;
@@ -114,7 +114,7 @@ class HttpLoader extends AbstractLoader
         }
 
         if (!function_exists('curl_init')) {
-            if (false === $handle = @fopen($url, 'r')) {
+            if (false !== $handle = fopen($url, 'r')) {
                 return $handle;
             }
         } else {

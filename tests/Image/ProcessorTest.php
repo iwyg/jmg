@@ -12,6 +12,7 @@
 namespace Thapp\Jmg\Tests\Image;
 
 use Thapp\Jmg\Parameters;
+use Thapp\Jmg\FilterExpression;
 use Thapp\Jmg\Image\Processor;
 use Thapp\Image\Geometry\Size;
 use Thapp\Image\Geometry\Point;
@@ -35,6 +36,50 @@ class ProcessorTest extends AbstractProcessorTest
     public function itShouldBeInstantiable()
     {
         $this->assertInstanceof('Thapp\Jmg\ProcessorInterface', $this->newProcessor());
+    }
+
+    /** @test */
+    public function itShouldSetOptions()
+    {
+        $options = ['foo' => 'bar'];
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        $proc->setOptions($options);
+        $proc->setOption('foo', 'baz');
+
+        $image->expects($this->once())->method('getBlob')->with(null, ['foo' => 'baz']);
+
+        $proc->getContents();
+    }
+
+    /** @test */
+    public function itShouldGetSourceFormat()
+    {
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
+
+        $this->assertNull($proc->getSourceFormat());
+
+        $resource->expects($this->once())->method('getMimeType')->willReturn('application/octet-stream');
+
+        $this->assertNull($proc->getSourceFormat());
+
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
+
+        $resource->expects($this->once())->method('getMimeType')->willReturn('image/jpeg');
+        $this->assertSame('jpg', $proc->getSourceFormat());
+    }
+
+    /** @test */
+    public function itShouldGetTargetFormat()
+    {
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        $image->expects($this->once())->method('getFormat')->willReturn('png');
+
+        $this->assertSame('png', $proc->getFileFormat());
+        $this->assertSame('png', $proc->getFileExtension());
+
+        $proc->setFileFormat('jpeg');
+        $this->assertSame('jpg', $proc->getFileFormat());
+        $this->assertSame('jpg', $proc->getFileExtension());
     }
 
     /** @test */
@@ -292,6 +337,75 @@ class ProcessorTest extends AbstractProcessorTest
         $this->assertSame('png', $proc->getFileFormat());
     }
 
+    /** @test */
+    public function itShouldProcessFilters()
+    {
+        $filter = $this->mockFilter();
+
+        $fresolver = $this->mockFilterResolver();
+        $fresolver->expects($this->any())->method('resolve')->with('gray')
+            ->will($this->returnValueMap([
+                ['circle', null],
+                ['gray', [$filter, $filter, $filter]]
+            ]));
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded($fresolver);
+
+        $map = [true, false, false];
+
+        $filter->expects($this->exactly(3))->method('supports')
+            ->with($proc)->willreturnCallback(function ($p) use (&$map) {
+                return array_pop($map);
+            });
+
+        $filter->expects($this->once())->method('apply')->with($proc);
+
+        $proc->process(Parameters::fromString('0'), new FilterExpression('gray'));
+    }
+
+    /** @test */
+    public function itShouldThrowIfNoSuitableFilterWasSupplied()
+    {
+        $filter = $this->mockFilter();
+        $fresolver = $this->mockFilterResolver();
+        $fresolver->expects($this->any())->method('resolve')->with('gray')
+            ->will($this->returnValueMap([
+                ['circle', null],
+                ['gray', [$filter]]
+            ]));
+
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded($fresolver);
+
+        $filter->expects($this->once())->method('supports')->with($proc)->willreturn(false);
+
+        try {
+            $proc->process(Parameters::fromString('0'), new FilterExpression('gray'));
+        } catch (\RuntimeException $e) {
+            $this->assertEquals('No suitable filter found.', $e->getMessage());
+        }
+    }
+
+    /** @test */
+    public function itShouldThrowIfFilterWasNotFound()
+    {
+        $fresolver = $this->mockFilterResolver();
+        $fresolver->expects($this->any())->method('resolve')->with('gray')->willReturn(null);
+
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded($fresolver);
+
+        try {
+            $proc->process(Parameters::fromString('0'), new FilterExpression('gray'));
+        } catch (\RuntimeException $e) {
+            $this->assertEquals('Filter "gray" not found.', $e->getMessage());
+        }
+    }
+
+    /** @test */
+    public function itShouldNotLoadFiltersIfResolverIsNull()
+    {
+        list($proc, $image, $resource, $edit) = $this->prepareLoaded();
+        $proc->process(Parameters::fromString('0'), new FilterExpression('gray'));
+    }
+
     public function resizeParamProvider()
     {
         return [
@@ -355,9 +469,9 @@ class ProcessorTest extends AbstractProcessorTest
             ->getMock();
     }
 
-    protected function prepareLoaded()
+    protected function prepareLoaded($filterResolver = null)
     {
-        $proc = $this->newProcessor();
+        $proc = $this->newProcessor($filterResolver);
         $this->source->expects($this->once())->method('read')->willReturn($image = $this->mockDriver());
         $proc->load($resource = $this->mockFileresource());
         $edit = $this->getMockBuilder('Thapp\Image\Driver\EditInterface')
@@ -368,11 +482,16 @@ class ProcessorTest extends AbstractProcessorTest
         return [$proc, $image, $resource, $edit];
     }
 
-    protected function newProcessor()
+    protected function newProcessor($resolver = null)
     {
-        return new Processor($this->source = $this->mockSource());
+        return new Processor($this->source = $this->mockSource(), $resolver);
     }
 
+    protected function mockFilterResolver()
+    {
+        return $this->getMockBuilder('Thapp\Jmg\Resolver\FilterResolverInterface')
+            ->disableOriginalConstructor()->getMock();
+    }
     protected function mockSource()
     {
         return $this->getMockBuilder('Thapp\Image\Driver\SourceInterface')
@@ -394,5 +513,17 @@ class ProcessorTest extends AbstractProcessorTest
     protected function getDriverClass()
     {
         return 'Thapp\Image\Driver\ImageInterface';
+    }
+
+    protected function mockFilter()
+    {
+        return $this->getMockbuilder('Thapp\Jmg\Filter\FilterInterface')
+            ->disableOriginalConstructor()->getMock();
+    }
+
+    protected function mockParams()
+    {
+        return $this->getMockbuilder('Thapp\Jmg\Parameters')
+            ->disableOriginalConstructor()->getMock();
     }
 }

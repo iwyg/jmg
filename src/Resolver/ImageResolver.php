@@ -31,8 +31,6 @@ use Thapp\Jmg\Cache\CacheInterface as Cache;
  */
 class ImageResolver implements ImageResolverInterface
 {
-    use ImageResolverHelper;
-
     /** @var ProcessorInterface */
     private $processor;
 

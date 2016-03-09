@@ -130,14 +130,14 @@ abstract class AbstractProcessor implements ProcessorInterface
      *
      * @return string
      */
-    public function getFileFormat()
-    {
-        if (null === $this->targetFormat) {
-            $this->targetFormat = $this->getSourceFormat();
-        }
+    abstract public function getFileFormat();
+    //{
+        //if (null === $this->targetFormat) {
+            //$this->targetFormat = $this->getSourceFormat();
+        //}
 
-        return static::formatToExtension($this->targetFormat);
-    }
+        //return static::formatToExtension($this->targetFormat);
+    //}
 
     /**
      * {@inheritdoc}
@@ -281,9 +281,11 @@ abstract class AbstractProcessor implements ProcessorInterface
     {
         $formats = static::formats();
 
-        if (array_key_exists($format, $formats)) {
-            return $formats[$format];
+        if (!array_key_exists($format, $formats)) {
+            return;
         }
+
+        return $formats[$format];
     }
 
     /**
