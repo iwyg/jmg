@@ -30,6 +30,7 @@ Using the `ImageResolver` class, it is easy to resolve images from parameter str
 ```php
 <?php
 
+use Thapp\Jmg\ParamGroup;
 use Thapp\Jmg\Image\Processor;
 use Thapp\Jmg\Resolver\PathResolver;
 use Thapp\Jmg\Resolver\LoaderReslover;
@@ -41,7 +42,7 @@ $processor = new Thapp\Jmg\Image\Processor(
 
 $images = new ImageResolver($source, $pathResolver, $loaderResolver);
 
-if ($resource = $res->resolve('images/source.jpg', Parameters::fromString('2/400/400/5'))) {
+if ($resource = $res->resolve('images/source.jpg', ParamGroup::fromString('2/400/400/5'))) {
     header('Content-Type: image/jpeg');
     echo $resource->getContents();
 }
