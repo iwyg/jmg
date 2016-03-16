@@ -32,7 +32,9 @@ trait FileHelper
      */
     protected function dumpFile($file, $contents)
     {
-        $this->ensureDir($dir = dirname($file));
+        if (!$this->ensureDir($dir = dirname($file))) {
+            return false;
+        }
 
         if (!is_file($file)) {
             if (false === @touch($file)) {
@@ -62,13 +64,19 @@ trait FileHelper
      *
      * @param string $path
      *
-     * @return void
+     * @return bool
      */
     protected function ensureDir($path)
     {
         if (!is_dir($path)) {
-            @mkdir($path, 0755, true);
+            return mkdir($path, 0775, true);
         }
+
+        if (!is_writable($path)) {
+            return chmod($path, 0775);
+        }
+
+        return true;
     }
 
     /**
