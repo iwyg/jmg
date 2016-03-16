@@ -69,11 +69,11 @@ trait FileHelper
     protected function ensureDir($path)
     {
         if (!is_dir($path)) {
-            return mkdir($path, $mask, true);
+            return mkdir($path, $this->mask(0775), true);
         }
 
         if (!is_writable($path)) {
-            return chmod($path, $mask);
+            return chmod($path, $this->mask(0775));
         }
 
         return true;

@@ -25,6 +25,7 @@ interface LoaderInterface
      *
      * @param string|resource $source
      *
+     * @throws Thapp\Jmg\Exception\SourceLoaderException
      * @return Thapp\Jmg\Resource\FileResourceInterface
      */
     public function load($source);
