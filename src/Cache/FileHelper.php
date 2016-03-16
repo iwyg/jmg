@@ -47,7 +47,7 @@ trait FileHelper
         file_put_contents($tmp, $contents);
 
         $source = fopen($tmp, 'r');
-        $target = fopen($file, 'w');
+        $target = fopen($file, 'wb+');
 
         $result = stream_copy_to_stream($source, $target);
 
@@ -69,11 +69,11 @@ trait FileHelper
     protected function ensureDir($path)
     {
         if (!is_dir($path)) {
-            return mkdir($path, 0775, true);
+            return mkdir($path, $mask, true);
         }
 
         if (!is_writable($path)) {
-            return chmod($path, 0775);
+            return chmod($path, $mask);
         }
 
         return true;
@@ -160,5 +160,17 @@ trait FileHelper
     public function exists($file)
     {
         return $this->isDir($file) || $this->isFile($file);
+    }
+
+    /**
+     * get propper write mode
+     *
+     * @param int $mode
+     *
+     * @return int
+     */
+    private function mask($mode = 0775)
+    {
+        return 0775 & ~umask();
     }
 }
